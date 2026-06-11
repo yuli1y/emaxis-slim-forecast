@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>eMAXIS Slim オルカン 予想基準価額</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="summary">
+        <div>
+          <p class="eyebrow">eMAXIS Slim 全世界株式</p>
+          <h1>オール・カントリー 予想基準価額</h1>
+        </div>
+        <button id="refresh" class="icon-button" type="button" aria-label="更新" title="更新">
+          <span aria-hidden="true">↻</span>
+        </button>
+      </section>
+
+      <section class="grid">
+        <article class="panel main-panel">
+          <div class="panel-head">
+            <span>直近基準価額</span>
+            <span id="nav-date">--</span>
+          </div>
+          <div class="nav-row">
+            <strong id="latest-nav">--</strong>
+            <span id="actual-change" class="change">--</span>
+          </div>
+        </article>
+
+        <article class="panel forecast" data-slot="06:00">
+          <div class="panel-head">
+            <span>午前6時</span>
+            <span class="badge">予想</span>
+          </div>
+          <strong id="forecast-06">--</strong>
+          <span id="change-06" class="change">--</span>
+        </article>
+
+        <article class="panel forecast" data-slot="18:00">
+          <div class="panel-head">
+            <span>午後6時</span>
+            <span class="badge">予想</span>
+          </div>
+          <strong id="forecast-18">--</strong>
+          <span id="change-18" class="change">--</span>
+        </article>
+      </section>
+
+      <section class="market-strip" aria-label="推計材料">
+        <div>
+          <span>ACWI</span>
+          <strong id="acwi-return">--</strong>
+        </div>
+        <div>
+          <span>USD/JPY</span>
+          <strong id="fx-return">--</strong>
+        </div>
+        <div>
+          <span>更新時刻</span>
+          <strong id="as-of">--</strong>
+        </div>
+      </section>
+
+      <section class="note">
+        <p id="method">データ取得中です。</p>
+        <p class="risk">投資判断用の正式価格ではありません。実際の基準価額とはずれる可能性があります。</p>
+      </section>
+
+      <p id="error" class="error" hidden></p>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
