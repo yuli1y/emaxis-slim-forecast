@@ -143,6 +143,7 @@ def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
     predicted = fund["value"] * (1 + combined_return)
     return {
         "slot": f"{slot_hour:02d}:00",
+        "status": "ready",
         "predictedNav": round(predicted),
         "change": round(predicted - fund["value"]),
         "changePct": combined_return,
@@ -153,11 +154,64 @@ def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
     }
 
 
+def pending_forecast(slot: str, message: str) -> dict:
+    return {
+        "slot": slot,
+        "status": "pending",
+        "message": message,
+        "predictedNav": None,
+        "change": None,
+        "changePct": None,
+        "drivers": {
+            "acwiReturn": None,
+            "fxReturn": None,
+        },
+    }
+
+
+def active_slot(now: datetime) -> str:
+    if 6 <= now.hour < 18:
+        return "06:00"
+    return "18:00"
+
+
+def load_existing_snapshot() -> dict | None:
+    if not DATA_PATH.exists():
+        return None
+    try:
+        return json.loads(DATA_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dict]:
+    current_slot = active_slot(now)
+    forecasts = {
+        "06:00": pending_forecast("06:00", "06:00更新後に表示します。"),
+        "18:00": pending_forecast("18:00", "18:00更新後に表示します。"),
+    }
+
+    existing = load_existing_snapshot()
+    if existing and existing.get("fund", {}).get("navDate") == fund["date"]:
+        for forecast in existing.get("forecasts", []):
+            if forecast.get("slot") in forecasts and forecast.get("status") == "ready":
+                forecasts[forecast["slot"]] = forecast
+
+    if current_slot == "06:00":
+        forecasts["06:00"] = estimate(6, fund, acwi, fx)
+        forecasts["18:00"] = pending_forecast("18:00", "18:00更新後に表示します。")
+    else:
+        forecasts["18:00"] = estimate(18, fund, acwi, fx)
+
+    return [forecasts["06:00"], forecasts["18:00"]]
+
+
 def build_snapshot() -> dict:
     fund = latest_fund_price()
     acwi = latest_market_price(ACWI_SYMBOL, "ACWI ETF")
     fx = latest_market_price(FX_SYMBOL, "USD/JPY")
     now = datetime.now(JST)
+    slot = active_slot(now)
     market_errors = [item["error"] for item in (acwi, fx) if item.get("error")]
 
     method = (
@@ -183,8 +237,8 @@ def build_snapshot() -> dict:
             "acwi": acwi,
             "usdJpy": fx,
         },
-        "forecasts": [estimate(6, fund, acwi, fx), estimate(18, fund, acwi, fx)],
-        "currentSlot": "06:00" if now.hour < 12 else "18:00",
+        "forecasts": build_forecasts(now, fund, acwi, fx),
+        "currentSlot": slot,
         "method": method,
         "marketErrors": market_errors,
     }

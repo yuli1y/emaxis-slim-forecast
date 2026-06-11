@@ -35,6 +35,7 @@
   "forecasts": [
     {
       "slot": "06:00",
+      "status": "ready",
       "predictedNav": 37146,
       "change": -51,
       "changePct": -0.0013610260357389548,
@@ -45,16 +46,18 @@
     },
     {
       "slot": "18:00",
-      "predictedNav": 37146,
-      "change": -51,
-      "changePct": -0.0013610260357389548,
+      "status": "pending",
+      "message": "18:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
       "drivers": {
-        "acwiReturn": -0.002065531043195068,
-        "fxReturn": 0.0007045050074561132
+        "acwiReturn": null,
+        "fxReturn": null
       }
     }
   ],
-  "currentSlot": "18:00",
+  "currentSlot": "06:00",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率を単純加算して掛けた簡易推計です。信託報酬、配当、組入銘柄差、時差、休日差は未調整です。",
   "marketErrors": []
 }

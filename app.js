@@ -40,6 +40,12 @@ function setPercent(node, value) {
   node.classList.toggle("loss", value < 0);
 }
 
+function setPending(valueNode, changeNode, message) {
+  valueNode.textContent = "未更新";
+  changeNode.textContent = message;
+  changeNode.classList.remove("gain", "loss");
+}
+
 function render(data) {
   ids.error.hidden = true;
   ids.navDate.textContent = data.fund.navDate;
@@ -50,6 +56,10 @@ function render(data) {
     const isMorning = forecast.slot === "06:00";
     const valueNode = isMorning ? ids.forecast06 : ids.forecast18;
     const changeNode = isMorning ? ids.change06 : ids.change18;
+    if (forecast.status !== "ready") {
+      setPending(valueNode, changeNode, forecast.message || "更新後に表示します。");
+      continue;
+    }
     valueNode.textContent = `${yen.format(forecast.predictedNav)}円`;
     setChange(changeNode, forecast.change, forecast.changePct);
   }
