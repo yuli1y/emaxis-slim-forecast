@@ -213,7 +213,17 @@ def pending_forecast(slot: str, message: str) -> dict:
 def active_slot(now: datetime) -> str:
     if 10 <= now.hour < 18:
         return "10:00"
-    return "18:00"
+    if 18 <= now.hour < 23:
+        return "18:00"
+    return "next"
+
+
+def next_business_date(date_text: str) -> str:
+    base = datetime.strptime(date_text, "%Y/%m/%d").date()
+    target = base + timedelta(days=1)
+    while target.weekday() >= 5:
+        target += timedelta(days=1)
+    return target.strftime("%Y/%m/%d")
 
 
 def load_existing_snapshot() -> dict | None:
@@ -227,21 +237,22 @@ def load_existing_snapshot() -> dict | None:
 
 def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dict]:
     current_slot = active_slot(now)
+    forecast_date = next_business_date(fund["date"])
     forecasts = {
-        "10:00": pending_forecast("10:00", "10:00更新後に表示します。"),
-        "18:00": pending_forecast("18:00", "18:00更新後に表示します。"),
+        "10:00": pending_forecast("10:00", f"{forecast_date} 10:00更新後に表示します。"),
+        "18:00": pending_forecast("18:00", f"{forecast_date} 18:00更新後に表示します。"),
     }
 
     existing = load_existing_snapshot()
-    if existing and existing.get("fund", {}).get("navDate") == fund["date"]:
+    if current_slot != "next" and existing and existing.get("fund", {}).get("navDate") == fund["date"]:
         for forecast in existing.get("forecasts", []):
             if forecast.get("slot") in forecasts and forecast.get("status") == "ready":
                 forecasts[forecast["slot"]] = forecast
 
     if current_slot == "10:00":
         forecasts["10:00"] = estimate(10, fund, acwi, fx)
-        forecasts["18:00"] = pending_forecast("18:00", "18:00更新後に表示します。")
-    else:
+        forecasts["18:00"] = pending_forecast("18:00", f"{forecast_date} 18:00更新後に表示します。")
+    elif current_slot == "18:00":
         forecasts["18:00"] = estimate(18, fund, acwi, fx)
 
     return [forecasts["10:00"], forecasts["18:00"]]
@@ -265,6 +276,7 @@ def build_snapshot() -> dict:
 
     return {
         "asOf": now.isoformat(timespec="seconds"),
+        "forecastDate": next_business_date(fund["date"]),
         "fund": {
             "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
             "symbol": FUND_CODE,

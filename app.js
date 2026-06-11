@@ -9,6 +9,8 @@ const ids = {
   navDate: document.querySelector("#nav-date"),
   latestNav: document.querySelector("#latest-nav"),
   actualChange: document.querySelector("#actual-change"),
+  forecast10Label: document.querySelector("#forecast-10-label"),
+  forecast18Label: document.querySelector("#forecast-18-label"),
   forecast10: document.querySelector("#forecast-10"),
   change10: document.querySelector("#change-10"),
   forecast18: document.querySelector("#forecast-18"),
@@ -50,6 +52,29 @@ function setPending(valueNode, changeNode, message) {
   changeNode.classList.remove("gain", "loss");
 }
 
+function shortDate(dateText) {
+  const parts = dateText.split("/");
+  if (parts.length !== 3) return dateText;
+  return `${Number(parts[1])}/${Number(parts[2])}`;
+}
+
+function nextBusinessDate(dateText) {
+  const parts = dateText.split("/").map(Number);
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return "";
+  const target = new Date(parts[0], parts[1] - 1, parts[2] + 1);
+  while (target.getDay() === 0 || target.getDay() === 6) {
+    target.setDate(target.getDate() + 1);
+  }
+  return `${target.getFullYear()}/${String(target.getMonth() + 1).padStart(2, "0")}/${String(
+    target.getDate(),
+  ).padStart(2, "0")}`;
+}
+
+function isNextForecastWindow(data) {
+  const hour = new Date(data.asOf).getHours();
+  return hour >= 23 || hour < 10 || data.currentSlot === "next";
+}
+
 function chartPath(points, width, height, pad) {
   const values = points.map((point) => point.value);
   const min = Math.min(...values);
@@ -89,15 +114,24 @@ function renderChart(data) {
 
 function render(data) {
   ids.error.hidden = true;
-  ids.navDate.textContent = data.fund.navDate;
+  ids.navDate.textContent = `基準日 ${data.fund.navDate}`;
+  const rawForecastDate = data.forecastDate || nextBusinessDate(data.fund.navDate);
+  const forecastDate = rawForecastDate ? shortDate(rawForecastDate) : "";
+  ids.forecast10Label.textContent = forecastDate ? `${forecastDate} 午前10時` : "午前10時";
+  ids.forecast18Label.textContent = forecastDate ? `${forecastDate} 午後6時` : "午後6時";
   ids.latestNav.textContent = `${yen.format(data.fund.nav)}円`;
   setChange(ids.actualChange, data.fund.actualChange, data.fund.actualChangePct);
   renderChart(data);
 
+  const nextForecastWindow = isNextForecastWindow(data);
   for (const forecast of data.forecasts) {
     const isMorning = forecast.slot === "10:00";
     const valueNode = isMorning ? ids.forecast10 : ids.forecast18;
     const changeNode = isMorning ? ids.change10 : ids.change18;
+    if (nextForecastWindow) {
+      setPending(valueNode, changeNode, `${rawForecastDate} ${forecast.slot}更新後に表示します。`);
+      continue;
+    }
     if (forecast.status !== "ready") {
       setPending(valueNode, changeNode, forecast.message || "更新後に表示します。");
       continue;
@@ -115,7 +149,7 @@ function render(data) {
   ids.method.textContent = data.method;
 
   document.querySelectorAll(".forecast").forEach((panel) => {
-    panel.classList.toggle("active", panel.dataset.slot === data.currentSlot);
+    panel.classList.toggle("active", !nextForecastWindow && panel.dataset.slot === data.currentSlot);
   });
 }
 
