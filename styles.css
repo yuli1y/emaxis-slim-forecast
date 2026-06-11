@@ -200,6 +200,11 @@ h1 {
   font-weight: 700;
 }
 
+.note .schedule {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
 .error {
   padding: 14px 16px;
   border-radius: 8px;
