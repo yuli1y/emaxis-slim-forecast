@@ -279,40 +279,101 @@ h1 {
 
 @media (max-width: 820px) {
   .shell {
-    width: min(100vw - 24px, 620px);
-    padding: 18px 0;
+    width: min(100vw - 20px, 620px);
+    padding: 10px 0;
   }
 
   .summary {
     align-items: flex-start;
-    padding: 16px 0;
+    gap: 10px;
+    padding: 10px 0 8px;
+  }
+
+  .eyebrow {
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 34px;
+    line-height: 1.02;
+  }
+
+  .icon-button {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
   }
 
   .grid,
   .market-strip {
     grid-template-columns: 1fr;
     display: grid;
+    gap: 8px;
   }
 
   .chart-panel {
-    padding: 16px 16px 10px;
+    margin-bottom: 8px;
+    padding: 12px 14px 8px;
+  }
+
+  .chart-head strong {
+    font-size: 20px;
+  }
+
+  .chart-head span {
+    font-size: 12px;
   }
 
   .chart {
-    height: 150px;
+    height: 108px;
+    margin-top: 6px;
   }
 
   .panel {
-    min-height: 152px;
+    min-height: 126px;
+    padding: 14px;
+  }
+
+  .panel-head {
+    font-size: 13px;
+  }
+
+  .panel strong {
+    margin-top: 20px;
+    font-size: 38px;
+  }
+
+  .main-panel strong {
+    margin: 0;
   }
 
   .forecast {
-    min-height: 116px;
+    min-height: 104px;
+    padding: 12px 14px;
+  }
+
+  .forecast strong {
+    margin-top: 14px;
+    font-size: 34px;
+  }
+
+  .forecast .change {
+    min-height: 26px;
+    margin-top: 8px;
+    padding: 4px 10px;
   }
 
   .nav-row {
     align-items: flex-start;
     flex-direction: column;
-    margin-top: 30px;
+    gap: 8px;
+    margin-top: 22px;
+  }
+
+  .change {
+    min-height: 28px;
+    margin-top: 8px;
+    padding: 4px 10px;
   }
 }
