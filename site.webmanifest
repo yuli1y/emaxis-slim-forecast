@@ -1,0 +1,16 @@
+{
+  "name": "eMAXIS Slim オルカン 予想基準価額",
+  "short_name": "オルカン予想",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#eef2ef",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
