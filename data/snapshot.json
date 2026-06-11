@@ -45,9 +45,9 @@
       }
     },
     {
-      "slot": "23:00",
+      "slot": "18:00",
       "status": "pending",
-      "message": "23:00更新後に表示します。",
+      "message": "18:00更新後に表示します。",
       "predictedNav": null,
       "change": null,
       "changePct": null,

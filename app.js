@@ -11,8 +11,8 @@ const ids = {
   actualChange: document.querySelector("#actual-change"),
   forecast10: document.querySelector("#forecast-10"),
   change10: document.querySelector("#change-10"),
-  forecast23: document.querySelector("#forecast-23"),
-  change23: document.querySelector("#change-23"),
+  forecast18: document.querySelector("#forecast-18"),
+  change18: document.querySelector("#change-18"),
   acwiReturn: document.querySelector("#acwi-return"),
   fxReturn: document.querySelector("#fx-return"),
   asOf: document.querySelector("#as-of"),
@@ -54,8 +54,8 @@ function render(data) {
 
   for (const forecast of data.forecasts) {
     const isMorning = forecast.slot === "10:00";
-    const valueNode = isMorning ? ids.forecast10 : ids.forecast23;
-    const changeNode = isMorning ? ids.change10 : ids.change23;
+    const valueNode = isMorning ? ids.forecast10 : ids.forecast18;
+    const changeNode = isMorning ? ids.change10 : ids.change18;
     if (forecast.status !== "ready") {
       setPending(valueNode, changeNode, forecast.message || "更新後に表示します。");
       continue;

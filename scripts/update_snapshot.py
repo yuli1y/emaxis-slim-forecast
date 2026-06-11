@@ -170,9 +170,9 @@ def pending_forecast(slot: str, message: str) -> dict:
 
 
 def active_slot(now: datetime) -> str:
-    if 10 <= now.hour < 23:
+    if 10 <= now.hour < 18:
         return "10:00"
-    return "23:00"
+    return "18:00"
 
 
 def load_existing_snapshot() -> dict | None:
@@ -188,7 +188,7 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
     current_slot = active_slot(now)
     forecasts = {
         "10:00": pending_forecast("10:00", "10:00更新後に表示します。"),
-        "23:00": pending_forecast("23:00", "23:00更新後に表示します。"),
+        "18:00": pending_forecast("18:00", "18:00更新後に表示します。"),
     }
 
     existing = load_existing_snapshot()
@@ -199,11 +199,11 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
 
     if current_slot == "10:00":
         forecasts["10:00"] = estimate(10, fund, acwi, fx)
-        forecasts["23:00"] = pending_forecast("23:00", "23:00更新後に表示します。")
+        forecasts["18:00"] = pending_forecast("18:00", "18:00更新後に表示します。")
     else:
-        forecasts["23:00"] = estimate(23, fund, acwi, fx)
+        forecasts["18:00"] = estimate(18, fund, acwi, fx)
 
-    return [forecasts["10:00"], forecasts["23:00"]]
+    return [forecasts["10:00"], forecasts["18:00"]]
 
 
 def build_snapshot() -> dict:
