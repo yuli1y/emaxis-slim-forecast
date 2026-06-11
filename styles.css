@@ -62,9 +62,58 @@ h1 {
   cursor: pointer;
 }
 
+.chart-panel {
+  margin-bottom: 14px;
+  padding: 18px 20px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.chart-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chart-head span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.chart-head strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: 190px;
+  margin-top: 10px;
+  overflow: visible;
+}
+
+.chart-area {
+  fill: var(--accent-soft);
+}
+
+.chart-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4;
+}
+
 .grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
+  align-items: start;
+  grid-template-columns: 1.15fr 0.82fr 0.82fr;
   gap: 14px;
 }
 
@@ -156,6 +205,21 @@ h1 {
   box-shadow: inset 0 0 0 2px var(--accent);
 }
 
+.forecast {
+  min-height: 128px;
+  padding: 14px;
+}
+
+.forecast strong {
+  margin-top: 18px;
+  font-size: clamp(26px, 3.5vw, 36px);
+}
+
+.forecast .change {
+  min-height: 28px;
+  font-size: 13px;
+}
+
 .market-strip {
   margin-top: 14px;
   padding: 18px 20px;
@@ -230,8 +294,20 @@ h1 {
     display: grid;
   }
 
+  .chart-panel {
+    padding: 16px 16px 10px;
+  }
+
+  .chart {
+    height: 150px;
+  }
+
   .panel {
     min-height: 152px;
+  }
+
+  .forecast {
+    min-height: 116px;
   }
 
   .nav-row {

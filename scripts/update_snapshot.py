@@ -19,13 +19,16 @@ ACWI_SYMBOL = "ACWI"
 FX_SYMBOL = "JPY=X"
 
 
-def fetch_json(url: str) -> dict:
+def fetch_json(url: str, extra_headers: dict | None = None) -> dict:
+    headers = {
+        "User-Agent": "Mozilla/5.0 emaxis-slim-forecast/1.0",
+        "Accept": "application/json,text/plain,*/*",
+    }
+    if extra_headers:
+        headers.update(extra_headers)
     request = urllib.request.Request(
         url,
-        headers={
-            "User-Agent": "Mozilla/5.0 emaxis-slim-forecast/1.0",
-            "Accept": "application/json,text/plain,*/*",
-        },
+        headers=headers,
     )
     with urllib.request.urlopen(request, timeout=20) as response:
         return json.loads(response.read().decode("utf-8"))
@@ -135,7 +138,45 @@ def latest_fund_price() -> dict:
         "return": parse_number(prices["changePriceRate"]) / 100,
         "change": change,
         "source": "Yahoo!ファイナンス",
+        "jwtToken": page_info.get("jwtToken", ""),
     }
+
+
+def fund_history(fund: dict) -> list[dict]:
+    existing = load_existing_snapshot() or {}
+    existing_history = existing.get("fund", {}).get("history") or []
+    try:
+        now = datetime.now(JST)
+        query = urllib.parse.urlencode(
+            {
+                "timeFrame": "daily",
+                "fromDate": (now - timedelta(days=31)).strftime("%Y%m%d"),
+                "toDate": now.strftime("%Y%m%d"),
+                "size": "80",
+            }
+        )
+        payload = fetch_json(
+            f"https://finance.yahoo.co.jp/bff-pc/v1/main/fund/chart/history/{FUND_CODE}?{query}",
+            {"jwt-token": fund["jwtToken"]},
+        )
+        points = [
+            {"date": item["baseDate"], "value": float(item["closePrice"])}
+            for item in payload.get("priceHistories", [])
+            if item.get("baseDate") and item.get("closePrice") is not None
+        ]
+    except Exception:
+        points = existing_history
+
+    latest_point = {"date": fund["date"].replace("/", "-"), "value": fund["value"]}
+    if not points:
+        return [latest_point]
+
+    if points[-1].get("date") != latest_point["date"]:
+        points = [*points, latest_point]
+    else:
+        points[-1] = latest_point
+
+    return points[-31:]
 
 
 def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
@@ -208,6 +249,7 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
 
 def build_snapshot() -> dict:
     fund = latest_fund_price()
+    history = fund_history(fund)
     acwi = latest_market_price(ACWI_SYMBOL, "ACWI ETF")
     fx = latest_market_price(FX_SYMBOL, "USD/JPY")
     now = datetime.now(JST)
@@ -232,6 +274,7 @@ def build_snapshot() -> dict:
             "actualChange": round(fund["change"]),
             "actualChangePct": fund["return"],
             "source": fund["source"],
+            "history": history,
         },
         "market": {
             "acwi": acwi,

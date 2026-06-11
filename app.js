@@ -19,6 +19,10 @@ const ids = {
   method: document.querySelector("#method"),
   error: document.querySelector("#error"),
   refresh: document.querySelector("#refresh"),
+  chartArea: document.querySelector("#chart-area"),
+  chartLine: document.querySelector("#chart-line"),
+  chartLatest: document.querySelector("#chart-latest"),
+  chartRange: document.querySelector("#chart-range"),
 };
 
 const DATA_PATH = "data/snapshot.json";
@@ -46,11 +50,49 @@ function setPending(valueNode, changeNode, message) {
   changeNode.classList.remove("gain", "loss");
 }
 
+function chartPath(points, width, height, pad) {
+  const values = points.map((point) => point.value);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  return points
+    .map((point, index) => {
+      const x = pad + (index / Math.max(points.length - 1, 1)) * (width - pad * 2);
+      const y = pad + (1 - (point.value - min) / span) * (height - pad * 2);
+      return `${index === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
+    })
+    .join(" ");
+}
+
+function renderChart(data) {
+  const history = (data.fund.history || []).filter((point) => Number.isFinite(point.value));
+  const latest = history.at(-1) || { date: data.fund.navDate, value: data.fund.nav };
+
+  ids.chartLatest.textContent = `${yen.format(Math.round(latest.value))}円`;
+  ids.chartRange.textContent =
+    history.length > 1 ? `${history[0].date} - ${history.at(-1).date}` : "履歴データ待ち";
+
+  if (history.length < 2) {
+    ids.chartLine.setAttribute("d", "");
+    ids.chartArea.setAttribute("d", "");
+    return;
+  }
+
+  const width = 640;
+  const height = 180;
+  const pad = 12;
+  const line = chartPath(history, width, height, pad);
+  const area = `${line} L${width - pad} ${height - pad} L${pad} ${height - pad} Z`;
+  ids.chartLine.setAttribute("d", line);
+  ids.chartArea.setAttribute("d", area);
+}
+
 function render(data) {
   ids.error.hidden = true;
   ids.navDate.textContent = data.fund.navDate;
   ids.latestNav.textContent = `${yen.format(data.fund.nav)}円`;
   setChange(ids.actualChange, data.fund.actualChange, data.fund.actualChangePct);
+  renderChart(data);
 
   for (const forecast of data.forecasts) {
     const isMorning = forecast.slot === "10:00";

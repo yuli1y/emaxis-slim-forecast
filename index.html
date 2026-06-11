@@ -8,7 +8,7 @@
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icon.svg" />
     <link rel="manifest" href="site.webmanifest" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260611-chart" />
   </head>
   <body>
     <main class="shell">
@@ -26,6 +26,20 @@
         >
           <span aria-hidden="true">↻</span>
         </button>
+      </section>
+
+      <section class="chart-panel" aria-label="1ヶ月チャート">
+        <div class="chart-head">
+          <div>
+            <span>1ヶ月チャート</span>
+            <strong id="chart-latest">--</strong>
+          </div>
+          <span id="chart-range">--</span>
+        </div>
+        <svg class="chart" viewBox="0 0 640 180" role="img" aria-label="直近1ヶ月の基準価額チャート">
+          <path id="chart-area" class="chart-area" d=""></path>
+          <path id="chart-line" class="chart-line" d=""></path>
+        </svg>
       </section>
 
       <section class="grid">
@@ -83,6 +97,6 @@
       <p id="error" class="error" hidden></p>
     </main>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=20260611-chart"></script>
   </body>
 </html>
