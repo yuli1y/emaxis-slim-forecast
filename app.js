@@ -21,7 +21,7 @@ const ids = {
   refresh: document.querySelector("#refresh"),
 };
 
-const API_PATH = "api/snapshot";
+const DATA_PATH = "data/snapshot.json";
 
 function signed(value) {
   const sign = value > 0 ? "+" : "";
@@ -71,23 +71,14 @@ async function load() {
   ids.refresh.disabled = true;
   try {
     ids.method.textContent = "データ取得中です。";
-    const response = await fetch(API_PATH, { cache: "no-store" });
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      throw new Error(
-        "価格APIが見つかりません。python3 server.py で起動し、http://localhost:8765 を開いてください。GitHubのファイル表示やGitHub PagesだけではPython APIが動きません。"
-      );
-    }
+    const response = await fetch(`${DATA_PATH}?t=${Date.now()}`, { cache: "no-store" });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "データを取得できませんでした。");
     render(data);
   } catch (error) {
-    const offline =
-      error instanceof TypeError
-        ? "価格APIに接続できません。python3 server.py で起動し、http://localhost:8765 を開いてください。"
-        : error.message;
     ids.method.textContent = "データを取得できませんでした。";
-    ids.error.textContent = offline;
+    ids.error.textContent =
+      "data/snapshot.jsonを読み込めません。GitHub Pagesまたはローカルの簡易HTTPサーバー経由で開いてください。";
     ids.error.hidden = false;
   } finally {
     ids.refresh.disabled = false;
@@ -96,4 +87,3 @@ async function load() {
 
 ids.refresh.addEventListener("click", load);
 load();
-setInterval(load, 10 * 60 * 1000);

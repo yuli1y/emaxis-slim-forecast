@@ -1,0 +1,60 @@
+{
+  "asOf": "2026-06-11T16:26:31+09:00",
+  "fund": {
+    "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
+    "symbol": "0331418A",
+    "navDate": "2026/06/10",
+    "nav": 37197,
+    "previousNav": 37159,
+    "actualChange": 38,
+    "actualChangePct": 0.001,
+    "source": "Yahoo!ファイナンス"
+  },
+  "market": {
+    "acwi": {
+      "symbol": "ACWI",
+      "label": "ACWI ETF",
+      "date": "2026-06-09",
+      "value": 154.60000610351562,
+      "previousDate": "2026-06-08",
+      "previousValue": 154.9199981689453,
+      "return": -0.002065531043195068,
+      "error": ""
+    },
+    "usdJpy": {
+      "symbol": "JPY=X",
+      "label": "USD/JPY",
+      "date": "2026-06-11",
+      "value": 160.4969940185547,
+      "previousDate": "2026-06-10",
+      "previousValue": 160.38400268554688,
+      "return": 0.0007045050074561132,
+      "error": ""
+    }
+  },
+  "forecasts": [
+    {
+      "slot": "06:00",
+      "predictedNav": 37146,
+      "change": -51,
+      "changePct": -0.0013610260357389548,
+      "drivers": {
+        "acwiReturn": -0.002065531043195068,
+        "fxReturn": 0.0007045050074561132
+      }
+    },
+    {
+      "slot": "18:00",
+      "predictedNav": 37146,
+      "change": -51,
+      "changePct": -0.0013610260357389548,
+      "drivers": {
+        "acwiReturn": -0.002065531043195068,
+        "fxReturn": 0.0007045050074561132
+      }
+    }
+  ],
+  "currentSlot": "18:00",
+  "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率を単純加算して掛けた簡易推計です。信託報酬、配当、組入銘柄差、時差、休日差は未調整です。",
+  "marketErrors": []
+}
