@@ -299,10 +299,25 @@ def build_snapshot() -> dict:
     }
 
 
+def already_updated_for_slot(snapshot: dict, existing: dict | None) -> bool:
+    if not existing:
+        return False
+    return (
+        existing.get("currentSlot") == snapshot.get("currentSlot")
+        and existing.get("forecastDate") == snapshot.get("forecastDate")
+        and existing.get("fund", {}).get("navDate") == snapshot.get("fund", {}).get("navDate")
+    )
+
+
 def main() -> None:
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+    existing = load_existing_snapshot()
+    snapshot = build_snapshot()
+    if already_updated_for_slot(snapshot, existing):
+        print(f"Snapshot already updated for {snapshot['currentSlot']} on {snapshot['forecastDate']}")
+        return
     DATA_PATH.write_text(
-        json.dumps(build_snapshot(), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     print(f"Wrote {DATA_PATH}")
