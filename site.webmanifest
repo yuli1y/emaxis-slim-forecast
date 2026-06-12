@@ -1,6 +1,6 @@
 {
-  "name": "eMAXIS Slim オルカン 予想基準価額",
-  "short_name": "オルカン予想",
+  "name": "eMAXIS Slim オルカン 参考推計",
+  "short_name": "オルカン参考",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#eef2ef",

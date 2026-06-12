@@ -17,6 +17,7 @@ JST = timezone(timedelta(hours=9), "JST")
 FUND_CODE = "0331418A"
 ACWI_SYMBOL = "ACWI"
 FX_SYMBOL = "JPY=X"
+ESTIMATED_ERROR_PCT = 0.01
 
 
 def fetch_json(url: str, extra_headers: dict | None = None) -> dict:
@@ -188,6 +189,8 @@ def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
         "predictedNav": round(predicted),
         "change": round(predicted - fund["value"]),
         "changePct": combined_return,
+        "estimatedErrorYen": round(predicted * ESTIMATED_ERROR_PCT),
+        "estimatedErrorPct": ESTIMATED_ERROR_PCT,
         "drivers": {
             "acwiReturn": acwi["return"],
             "fxReturn": fx["return"],
@@ -203,6 +206,8 @@ def pending_forecast(slot: str, message: str) -> dict:
         "predictedNav": None,
         "change": None,
         "changePct": None,
+        "estimatedErrorYen": None,
+        "estimatedErrorPct": ESTIMATED_ERROR_PCT,
         "drivers": {
             "acwiReturn": None,
             "fxReturn": None,
@@ -269,7 +274,8 @@ def build_snapshot() -> dict:
 
     method = (
         "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率を"
-        "単純加算して掛けた簡易推計です。信託報酬、配当、組入銘柄差、時差、休日差は未調整です。"
+        "単純加算して掛けた参考推計です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。"
+        f" 目安として推計値の±{ESTIMATED_ERROR_PCT:.0%}程度ずれる可能性があります。"
     )
     if market_errors:
         method += " 一部のマーケット材料を取得できなかったため、その材料の変化率は0%として表示しています。"

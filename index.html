@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0f766e" />
-    <title>eMAXIS Slim オルカン 予想基準価額</title>
+    <title>eMAXIS Slim オルカン 参考推計</title>
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icon.svg" />
     <link rel="manifest" href="site.webmanifest" />
@@ -15,7 +15,7 @@
       <section class="summary">
         <div>
           <p class="eyebrow">eMAXIS Slim 全世界株式</p>
-          <h1>オール・カントリー<br>予想基準価額</h1>
+          <h1>オール・カントリー<br>参考推計</h1>
         </div>
         <button
           id="refresh"
@@ -57,19 +57,21 @@
         <article class="panel forecast" data-slot="10:00">
           <div class="panel-head">
             <span id="forecast-10-label">午前10時</span>
-            <span class="badge">予想</span>
+            <span class="badge">参考</span>
           </div>
           <strong id="forecast-10">--</strong>
           <span id="change-10" class="change">--</span>
+          <span id="error-10" class="estimate-error">--</span>
         </article>
 
         <article class="panel forecast" data-slot="18:00">
           <div class="panel-head">
             <span id="forecast-18-label">午後6時</span>
-            <span class="badge">予想</span>
+            <span class="badge">参考</span>
           </div>
           <strong id="forecast-18">--</strong>
           <span id="change-18" class="change">--</span>
+          <span id="error-18" class="estimate-error">--</span>
         </article>
       </section>
 
@@ -90,13 +92,13 @@
 
       <section class="note">
         <p id="method">データ取得中です。</p>
-        <p class="schedule">予想基準価額は午前10時・午後6時、直近基準価額は午後11時10分にも自動更新されます。右上のボタンは最新データの再読み込みです。</p>
-        <p class="risk">投資判断用の正式価格ではありません。実際の基準価額とはずれる可能性があります。</p>
+        <p class="schedule">参考推計は午前10時・午後6時、直近基準価額は午後11時10分にも自動更新されます。右上のボタンは最新データの再読み込みです。</p>
+        <p class="risk">投資判断用の正式価格ではありません。表示値は実際の基準価額と大きくずれる可能性があります。</p>
       </section>
 
       <p id="error" class="error" hidden></p>
     </main>
 
-    <script src="app.js?v=20260611-night"></script>
+    <script src="app.js?v=20260613-error"></script>
   </body>
 </html>

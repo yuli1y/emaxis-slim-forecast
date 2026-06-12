@@ -13,8 +13,10 @@ const ids = {
   forecast18Label: document.querySelector("#forecast-18-label"),
   forecast10: document.querySelector("#forecast-10"),
   change10: document.querySelector("#change-10"),
+  error10: document.querySelector("#error-10"),
   forecast18: document.querySelector("#forecast-18"),
   change18: document.querySelector("#change-18"),
+  error18: document.querySelector("#error-18"),
   acwiReturn: document.querySelector("#acwi-return"),
   fxReturn: document.querySelector("#fx-return"),
   asOf: document.querySelector("#as-of"),
@@ -28,6 +30,7 @@ const ids = {
 };
 
 const DATA_PATH = "data/snapshot.json";
+const FALLBACK_ESTIMATED_ERROR_PCT = 0.01;
 
 function signed(value) {
   const sign = value > 0 ? "+" : "";
@@ -50,6 +53,14 @@ function setPending(valueNode, changeNode, message) {
   valueNode.textContent = "未更新";
   changeNode.textContent = message;
   changeNode.classList.remove("gain", "loss");
+}
+
+function setEstimateError(node, value) {
+  if (!Number.isFinite(value)) {
+    node.textContent = "";
+    return;
+  }
+  node.textContent = `誤差目安 ±${yen.format(value)}円`;
 }
 
 function shortDate(dateText) {
@@ -128,16 +139,23 @@ function render(data) {
     const isMorning = forecast.slot === "10:00";
     const valueNode = isMorning ? ids.forecast10 : ids.forecast18;
     const changeNode = isMorning ? ids.change10 : ids.change18;
+    const errorNode = isMorning ? ids.error10 : ids.error18;
     if (nextForecastWindow) {
       setPending(valueNode, changeNode, `${rawForecastDate} ${forecast.slot}更新後に表示します。`);
+      setEstimateError(errorNode, null);
       continue;
     }
     if (forecast.status !== "ready") {
       setPending(valueNode, changeNode, forecast.message || "更新後に表示します。");
+      setEstimateError(errorNode, null);
       continue;
     }
     valueNode.textContent = `${yen.format(forecast.predictedNav)}円`;
     setChange(changeNode, forecast.change, forecast.changePct);
+    setEstimateError(
+      errorNode,
+      forecast.estimatedErrorYen || Math.round(forecast.predictedNav * FALLBACK_ESTIMATED_ERROR_PCT),
+    );
   }
 
   setPercent(ids.acwiReturn, data.market.acwi.return);
