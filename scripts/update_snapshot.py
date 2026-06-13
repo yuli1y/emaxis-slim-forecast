@@ -194,8 +194,6 @@ def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
         "predictedNav": round(predicted),
         "change": round(predicted - fund["value"]),
         "changePct": combined_return,
-        "estimatedErrorYen": round(predicted * ESTIMATED_ERROR_PCT),
-        "estimatedErrorPct": ESTIMATED_ERROR_PCT,
         "drivers": {
             "acwiReturn": acwi["return"],
             "fxReturn": fx["return"],
@@ -211,8 +209,6 @@ def pending_forecast(slot: str, message: str) -> dict:
         "predictedNav": None,
         "change": None,
         "changePct": None,
-        "estimatedErrorYen": None,
-        "estimatedErrorPct": ESTIMATED_ERROR_PCT,
         "drivers": {
             "acwiReturn": None,
             "fxReturn": None,

@@ -220,13 +220,7 @@ h1 {
   font-size: 13px;
 }
 
-.estimate-error {
-  display: block;
-  margin-top: 8px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-}
+
 
 .market-strip {
   margin-top: 14px;
@@ -372,10 +366,7 @@ h1 {
     padding: 4px 10px;
   }
 
-  .estimate-error {
-    margin-top: 6px;
-    font-size: 11px;
-  }
+
 
   .nav-row {
     align-items: flex-start;
