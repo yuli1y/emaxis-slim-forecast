@@ -15,7 +15,6 @@ DATA_PATH = ROOT / "data" / "snapshot.json"
 JST = timezone(timedelta(hours=9), "JST")
 
 FUND_CODE = "0331418A"
-FUND_CSV_URL = "https://www.am.mufg.jp/fund_file/setteirai/253425.csv"
 ACWI_SYMBOL = "ACWI"
 FX_SYMBOL = "JPY=X"
 ESTIMATED_ERROR_PCT = 0.01
@@ -117,76 +116,73 @@ def latest_market_price(symbol: str, label: str) -> dict:
         }
 
 
-def fetch_fund_data_from_csv() -> list[dict]:
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
-    }
-    request = urllib.request.Request(
-        FUND_CSV_URL,
-        headers=headers,
+def fetch_fund_data_from_nikkei() -> dict:
+    url = f"https://www.nikkei.com/nkd/fund/?fcode={FUND_CODE}"
+    req = urllib.request.Request(
+        url,
+        headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
     )
-    with urllib.request.urlopen(request, timeout=20) as response:
-        content = response.read().decode("shift_jis")
-
-    lines = content.splitlines()
-    data_points = []
-    # Line 0 is the title, line 1 is headers. Data starts from line 2.
-    for line in lines[2:]:
-        if not line.strip():
-            continue
-        parts = line.split(",")
-        if len(parts) < 2:
-            continue
-        date_str = parts[0].strip()  # YYYY/MM/DD
-        nav_str = parts[1].strip()   # 基準価額(円)
-        if not date_str or not nav_str:
-            continue
-        try:
-            nav = int(nav_str)
-            data_points.append({
-                "date": date_str,
-                "value": nav,
-            })
-        except ValueError:
-            continue
-    return data_points
-
-
-def latest_fund_price(data_points: list[dict]) -> dict:
-    if len(data_points) < 2:
-        raise RuntimeError("三菱UFJアセットマネジメントのCSVから十分なデータを取得できませんでした")
+    with urllib.request.urlopen(req, timeout=20) as response:
+        html = response.read().decode("utf-8")
+        
+    date_match = re.search(r"<dt class=\"m-stockPriceElm_title\">基準価格\((.*?)\)：</dt>", html)
+    if not date_match:
+        raise RuntimeError("日経新聞のページから基準日を取得できませんでした")
+    date_text = date_match.group(1)
+    month, day = map(int, date_text.split("/"))
+    now = datetime.now(JST)
+    year = now.year
+    if now.month == 1 and month == 12:
+        year -= 1
+    date_formatted = f"{year}/{month:02d}/{day:02d}"
     
-    latest = data_points[-1]
-    prev = data_points[-2]
+    price_match = re.search(r"<dd class=\"m-stockPriceElm_value now\">([\d,]+)", html)
+    if not price_match:
+        raise RuntimeError("日経新聞のページから基準価格を取得できませんでした")
+    nav = float(price_match.group(1).replace(",", ""))
     
-    nav = float(latest["value"])
-    prev_nav = float(prev["value"])
-    change = nav - prev_nav
-    change_rate = change / prev_nav
+    change_match = re.search(r"<dt class=\"m-stockPriceElm_title\">前日比：</dt>\s*<dd class=\"[^\"]*\">([+\-\d,]+)", html)
+    if not change_match:
+        raise RuntimeError("日経新聞のページから前日比を取得できませんでした")
+    change = float(change_match.group(1).replace(",", ""))
+    
+    change_idx = change_match.end()
+    pct_match = re.search(r"\(([+\-\d\.,]+)%\)", html[change_idx:change_idx+100])
+    if not pct_match:
+        raise RuntimeError("日経新聞のページから前日比率を取得できませんでした")
+    change_rate = float(pct_match.group(1)) / 100
     
     return {
         "symbol": FUND_CODE,
-        "date": latest["date"],
+        "date": date_formatted,
         "value": nav,
-        "previousValue": prev_nav,
+        "previousValue": nav - change,
         "return": change_rate,
         "change": change,
-        "source": "三菱UFJアセットマネジメント",
+        "source": "日本経済新聞",
         "jwtToken": "",
     }
 
 
-def fund_history(fund: dict, data_points: list[dict]) -> list[dict]:
-    # Extract historical points (last 31 entries) and map keys/formats
-    history = []
-    for dp in data_points[-31:]:
-        history.append({
-            "date": dp["date"].replace("/", "-"),
-            "value": float(dp["value"])
-        })
-    return history
+def latest_fund_price(fund_data: dict) -> dict:
+    return fund_data
+
+
+def fund_history(fund: dict) -> list[dict]:
+    existing = load_existing_snapshot() or {}
+    existing_history = existing.get("fund", {}).get("history") or []
+    
+    latest_point = {"date": fund["date"].replace("/", "-"), "value": fund["value"]}
+    if not existing_history:
+        return [latest_point]
+        
+    points = existing_history
+    if points[-1].get("date") != latest_point["date"]:
+        points = [*points, latest_point]
+    else:
+        points[-1] = latest_point
+        
+    return points[-31:]
 
 
 def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
@@ -273,9 +269,9 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
 
 
 def build_snapshot() -> dict:
-    data_points = fetch_fund_data_from_csv()
-    fund = latest_fund_price(data_points)
-    history = fund_history(fund, data_points)
+    fund_data = fetch_fund_data_from_nikkei()
+    fund = latest_fund_price(fund_data)
+    history = fund_history(fund)
     acwi = latest_market_price(ACWI_SYMBOL, "ACWI ETF")
     fx = latest_market_price(FX_SYMBOL, "USD/JPY")
     now = datetime.now(JST)
