@@ -15,6 +15,7 @@ DATA_PATH = ROOT / "data" / "snapshot.json"
 JST = timezone(timedelta(hours=9), "JST")
 
 FUND_CODE = "0331418A"
+FUND_CSV_URL = "https://www.am.mufg.jp/fund_file/setteirai/253425.csv"
 ACWI_SYMBOL = "ACWI"
 FX_SYMBOL = "JPY=X"
 ESTIMATED_ERROR_PCT = 0.01
@@ -116,68 +117,74 @@ def latest_market_price(symbol: str, label: str) -> dict:
         }
 
 
-def latest_fund_price() -> dict:
-    url = f"https://finance.yahoo.co.jp/quote/{urllib.parse.quote(FUND_CODE)}"
-    html = fetch_text(url)
-    match = re.search(r"window\.__PRELOADED_STATE__\s*=\s*(\{.*?\})\s*</script>", html, re.S)
-    if not match:
-        raise RuntimeError("Yahoo Japanのページから基準価額データを抽出できませんでした")
+def fetch_fund_data_from_csv() -> list[dict]:
+    headers = {
+        "User-Agent": "Mozilla/5.0 emaxis-slim-forecast/1.0",
+    }
+    request = urllib.request.Request(
+        FUND_CSV_URL,
+        headers=headers,
+    )
+    with urllib.request.urlopen(request, timeout=20) as response:
+        content = response.read().decode("shift_jis")
 
-    state = json.loads(match.group(1))
-    prices = state["mainFundPriceBoard"]["fundPrices"]
-    page_info = state.get("pageInfo", {})
-    nav = parse_number(prices["price"])
-    change = parse_number(prices["changePrice"])
-    update_date = prices.get("updateDate", "")
-    year = page_info.get("currentYear") or datetime.now(JST).strftime("%Y")
+    lines = content.splitlines()
+    data_points = []
+    # Line 0 is the title, line 1 is headers. Data starts from line 2.
+    for line in lines[2:]:
+        if not line.strip():
+            continue
+        parts = line.split(",")
+        if len(parts) < 2:
+            continue
+        date_str = parts[0].strip()  # YYYY/MM/DD
+        nav_str = parts[1].strip()   # 基準価額(円)
+        if not date_str or not nav_str:
+            continue
+        try:
+            nav = int(nav_str)
+            data_points.append({
+                "date": date_str,
+                "value": nav,
+            })
+        except ValueError:
+            continue
+    return data_points
 
+
+def latest_fund_price(data_points: list[dict]) -> dict:
+    if len(data_points) < 2:
+        raise RuntimeError("三菱UFJアセットマネジメントのCSVから十分なデータを取得できませんでした")
+    
+    latest = data_points[-1]
+    prev = data_points[-2]
+    
+    nav = float(latest["value"])
+    prev_nav = float(prev["value"])
+    change = nav - prev_nav
+    change_rate = change / prev_nav
+    
     return {
         "symbol": FUND_CODE,
-        "date": f"{year}/{update_date}" if update_date else "",
+        "date": latest["date"],
         "value": nav,
-        "previousValue": nav - change,
-        "return": parse_number(prices["changePriceRate"]) / 100,
+        "previousValue": prev_nav,
+        "return": change_rate,
         "change": change,
-        "source": "Yahoo!ファイナンス",
-        "jwtToken": page_info.get("jwtToken", ""),
+        "source": "三菱UFJアセットマネジメント",
+        "jwtToken": "",
     }
 
 
-def fund_history(fund: dict) -> list[dict]:
-    existing = load_existing_snapshot() or {}
-    existing_history = existing.get("fund", {}).get("history") or []
-    try:
-        now = datetime.now(JST)
-        query = urllib.parse.urlencode(
-            {
-                "timeFrame": "daily",
-                "fromDate": (now - timedelta(days=31)).strftime("%Y%m%d"),
-                "toDate": now.strftime("%Y%m%d"),
-                "size": "80",
-            }
-        )
-        payload = fetch_json(
-            f"https://finance.yahoo.co.jp/bff-pc/v1/main/fund/chart/history/{FUND_CODE}?{query}",
-            {"jwt-token": fund["jwtToken"]},
-        )
-        points = [
-            {"date": item["baseDate"], "value": float(item["closePrice"])}
-            for item in payload.get("priceHistories", [])
-            if item.get("baseDate") and item.get("closePrice") is not None
-        ]
-    except Exception:
-        points = existing_history
-
-    latest_point = {"date": fund["date"].replace("/", "-"), "value": fund["value"]}
-    if not points:
-        return [latest_point]
-
-    if points[-1].get("date") != latest_point["date"]:
-        points = [*points, latest_point]
-    else:
-        points[-1] = latest_point
-
-    return points[-31:]
+def fund_history(fund: dict, data_points: list[dict]) -> list[dict]:
+    # Extract historical points (last 31 entries) and map keys/formats
+    history = []
+    for dp in data_points[-31:]:
+        history.append({
+            "date": dp["date"].replace("/", "-"),
+            "value": float(dp["value"])
+        })
+    return history
 
 
 def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
@@ -264,8 +271,9 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
 
 
 def build_snapshot() -> dict:
-    fund = latest_fund_price()
-    history = fund_history(fund)
+    data_points = fetch_fund_data_from_csv()
+    fund = latest_fund_price(data_points)
+    history = fund_history(fund, data_points)
     acwi = latest_market_price(ACWI_SYMBOL, "ACWI ETF")
     fx = latest_market_price(FX_SYMBOL, "USD/JPY")
     now = datetime.now(JST)
