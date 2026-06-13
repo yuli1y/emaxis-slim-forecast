@@ -119,7 +119,9 @@ def latest_market_price(symbol: str, label: str) -> dict:
 
 def fetch_fund_data_from_csv() -> list[dict]:
     headers = {
-        "User-Agent": "Mozilla/5.0 emaxis-slim-forecast/1.0",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
     }
     request = urllib.request.Request(
         FUND_CSV_URL,
