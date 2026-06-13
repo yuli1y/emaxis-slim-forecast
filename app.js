@@ -74,8 +74,9 @@ function nextBusinessDate(dateText) {
 }
 
 function isNextForecastWindow(data) {
-  const hour = new Date(data.asOf).getHours();
-  return hour >= 23 || hour < 6 || data.currentSlot === "next";
+  const d = new Date(data.asOf);
+  const timeVal = d.getHours() * 60 + d.getMinutes();
+  return timeVal >= 1410 || timeVal < 390 || data.currentSlot === "next";
 }
 
 function chartPath(points, width, height, pad) {
@@ -120,15 +121,15 @@ function render(data) {
   ids.navDate.textContent = `基準日 ${data.fund.navDate}`;
   const rawForecastDate = data.forecastDate || nextBusinessDate(data.fund.navDate);
   const forecastDate = rawForecastDate ? shortDate(rawForecastDate) : "";
-  ids.forecast6Label.textContent = forecastDate ? `${forecastDate} 午前6時` : "午前6時";
-  ids.forecast18Label.textContent = forecastDate ? `${forecastDate} 午後6時` : "午後6時";
+  ids.forecast6Label.textContent = forecastDate ? `${forecastDate} 午前6時30分` : "午前6時30分";
+  ids.forecast18Label.textContent = forecastDate ? `${forecastDate} 午後6時30分` : "午後6時30分";
   ids.latestNav.textContent = `${yen.format(data.fund.nav)}円`;
   setChange(ids.actualChange, data.fund.actualChange, data.fund.actualChangePct);
   renderChart(data);
 
   const nextForecastWindow = isNextForecastWindow(data);
   for (const forecast of data.forecasts) {
-    const isMorning = forecast.slot === "06:00";
+    const isMorning = forecast.slot === "06:30";
     const valueNode = isMorning ? ids.forecast6 : ids.forecast18;
     const changeNode = isMorning ? ids.change6 : ids.change18;
     if (nextForecastWindow) {

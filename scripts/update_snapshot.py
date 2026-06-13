@@ -189,7 +189,7 @@ def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
     combined_return = acwi["return"] + fx["return"]
     predicted = fund["value"] * (1 + combined_return)
     return {
-        "slot": f"{slot_hour:02d}:00",
+        "slot": f"{slot_hour:02d}:30",
         "status": "ready",
         "predictedNav": round(predicted),
         "change": round(predicted - fund["value"]),
@@ -218,9 +218,9 @@ def pending_forecast(slot: str, message: str) -> dict:
 
 def active_slot(now: datetime) -> str:
     if 6 <= now.hour < 18:
-        return "06:00"
+        return "06:30"
     if 18 <= now.hour < 23:
-        return "18:00"
+        return "18:30"
     return "next"
 
 
@@ -245,8 +245,8 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
     current_slot = active_slot(now)
     forecast_date = now.strftime("%Y/%m/%d")
     forecasts = {
-        "06:00": pending_forecast("06:00", f"{forecast_date} 06:00更新後に表示します。"),
-        "18:00": pending_forecast("18:00", f"{forecast_date} 18:00更新後に表示します。"),
+        "06:30": pending_forecast("06:30", f"{forecast_date} 06:30更新後に表示します。"),
+        "18:30": pending_forecast("18:30", f"{forecast_date} 18:30更新後に表示します。"),
     }
 
     existing = load_existing_snapshot()
@@ -255,13 +255,13 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
             if forecast.get("slot") in forecasts and forecast.get("status") == "ready":
                 forecasts[forecast["slot"]] = forecast
 
-    if current_slot == "06:00":
-        forecasts["06:00"] = estimate(6, fund, acwi, fx)
-        forecasts["18:00"] = pending_forecast("18:00", f"{forecast_date} 18:00更新後に表示します。")
-    elif current_slot == "18:00":
-        forecasts["18:00"] = estimate(18, fund, acwi, fx)
+    if current_slot == "06:30":
+        forecasts["06:30"] = estimate(6, fund, acwi, fx)
+        forecasts["18:30"] = pending_forecast("18:30", f"{forecast_date} 18:30更新後に表示します。")
+    elif current_slot == "18:30":
+        forecasts["18:30"] = estimate(18, fund, acwi, fx)
 
-    return [forecasts["06:00"], forecasts["18:00"]]
+    return [forecasts["06:30"], forecasts["18:30"]]
 
 
 def build_snapshot() -> dict:
