@@ -221,8 +221,8 @@ def pending_forecast(slot: str, message: str) -> dict:
 
 
 def active_slot(now: datetime) -> str:
-    if 10 <= now.hour < 18:
-        return "10:00"
+    if 6 <= now.hour < 18:
+        return "06:00"
     if 18 <= now.hour < 23:
         return "18:00"
     return "next"
@@ -247,9 +247,9 @@ def load_existing_snapshot() -> dict | None:
 
 def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dict]:
     current_slot = active_slot(now)
-    forecast_date = next_business_date(fund["date"])
+    forecast_date = now.strftime("%Y/%m/%d")
     forecasts = {
-        "10:00": pending_forecast("10:00", f"{forecast_date} 10:00更新後に表示します。"),
+        "06:00": pending_forecast("06:00", f"{forecast_date} 06:00更新後に表示します。"),
         "18:00": pending_forecast("18:00", f"{forecast_date} 18:00更新後に表示します。"),
     }
 
@@ -259,13 +259,13 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
             if forecast.get("slot") in forecasts and forecast.get("status") == "ready":
                 forecasts[forecast["slot"]] = forecast
 
-    if current_slot == "10:00":
-        forecasts["10:00"] = estimate(10, fund, acwi, fx)
+    if current_slot == "06:00":
+        forecasts["06:00"] = estimate(6, fund, acwi, fx)
         forecasts["18:00"] = pending_forecast("18:00", f"{forecast_date} 18:00更新後に表示します。")
     elif current_slot == "18:00":
         forecasts["18:00"] = estimate(18, fund, acwi, fx)
 
-    return [forecasts["10:00"], forecasts["18:00"]]
+    return [forecasts["06:00"], forecasts["18:00"]]
 
 
 def build_snapshot() -> dict:
@@ -280,7 +280,7 @@ def build_snapshot() -> dict:
 
     method = (
         "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率を"
-        "単純加算して掛けた参考推計です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。"
+        "単純加算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。"
         f" 目安として推計値の±{ESTIMATED_ERROR_PCT:.0%}程度ずれる可能性があります。"
     )
     if market_errors:
@@ -288,7 +288,7 @@ def build_snapshot() -> dict:
 
     return {
         "asOf": now.isoformat(timespec="seconds"),
-        "forecastDate": next_business_date(fund["date"]),
+        "forecastDate": now.strftime("%Y/%m/%d"),
         "fund": {
             "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
             "symbol": FUND_CODE,

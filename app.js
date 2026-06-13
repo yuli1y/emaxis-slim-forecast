@@ -9,11 +9,11 @@ const ids = {
   navDate: document.querySelector("#nav-date"),
   latestNav: document.querySelector("#latest-nav"),
   actualChange: document.querySelector("#actual-change"),
-  forecast10Label: document.querySelector("#forecast-10-label"),
+  forecast6Label: document.querySelector("#forecast-6-label"),
   forecast18Label: document.querySelector("#forecast-18-label"),
-  forecast10: document.querySelector("#forecast-10"),
-  change10: document.querySelector("#change-10"),
-  error10: document.querySelector("#error-10"),
+  forecast6: document.querySelector("#forecast-6"),
+  change6: document.querySelector("#change-6"),
+  error6: document.querySelector("#error-6"),
   forecast18: document.querySelector("#forecast-18"),
   change18: document.querySelector("#change-18"),
   error18: document.querySelector("#error-18"),
@@ -83,7 +83,7 @@ function nextBusinessDate(dateText) {
 
 function isNextForecastWindow(data) {
   const hour = new Date(data.asOf).getHours();
-  return hour >= 23 || hour < 10 || data.currentSlot === "next";
+  return hour >= 23 || hour < 6 || data.currentSlot === "next";
 }
 
 function chartPath(points, width, height, pad) {
@@ -128,7 +128,7 @@ function render(data) {
   ids.navDate.textContent = `基準日 ${data.fund.navDate}`;
   const rawForecastDate = data.forecastDate || nextBusinessDate(data.fund.navDate);
   const forecastDate = rawForecastDate ? shortDate(rawForecastDate) : "";
-  ids.forecast10Label.textContent = forecastDate ? `${forecastDate} 午前10時` : "午前10時";
+  ids.forecast6Label.textContent = forecastDate ? `${forecastDate} 午前6時` : "午前6時";
   ids.forecast18Label.textContent = forecastDate ? `${forecastDate} 午後6時` : "午後6時";
   ids.latestNav.textContent = `${yen.format(data.fund.nav)}円`;
   setChange(ids.actualChange, data.fund.actualChange, data.fund.actualChangePct);
@@ -136,10 +136,10 @@ function render(data) {
 
   const nextForecastWindow = isNextForecastWindow(data);
   for (const forecast of data.forecasts) {
-    const isMorning = forecast.slot === "10:00";
-    const valueNode = isMorning ? ids.forecast10 : ids.forecast18;
-    const changeNode = isMorning ? ids.change10 : ids.change18;
-    const errorNode = isMorning ? ids.error10 : ids.error18;
+    const isMorning = forecast.slot === "06:00";
+    const valueNode = isMorning ? ids.forecast6 : ids.forecast18;
+    const changeNode = isMorning ? ids.change6 : ids.change18;
+    const errorNode = isMorning ? ids.error6 : ids.error18;
     if (nextForecastWindow) {
       setPending(valueNode, changeNode, `${rawForecastDate} ${forecast.slot}更新後に表示します。`);
       setEstimateError(errorNode, null);
