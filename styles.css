@@ -403,3 +403,11 @@ h1 {
   cursor: not-allowed;
   background-color: transparent;
 }
+
+.forecast-time {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}

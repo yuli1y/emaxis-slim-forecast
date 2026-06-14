@@ -13,8 +13,10 @@ const ids = {
   forecast18Label: document.querySelector("#forecast-18-label"),
   forecast6: document.querySelector("#forecast-6"),
   change6: document.querySelector("#change-6"),
+  time6: document.querySelector("#time-6"),
   forecast18: document.querySelector("#forecast-18"),
   change18: document.querySelector("#change-18"),
+  time18: document.querySelector("#time-18"),
   acwiReturn: document.querySelector("#acwi-return"),
   fxReturn: document.querySelector("#fx-return"),
   asOf: document.querySelector("#as-of"),
@@ -121,8 +123,8 @@ function render(data) {
   ids.navDate.textContent = `基準日 ${data.fund.navDate}`;
   const rawForecastDate = data.forecastDate || nextBusinessDate(data.fund.navDate);
   const forecastDate = rawForecastDate ? shortDate(rawForecastDate) : "";
-  ids.forecast6Label.textContent = forecastDate ? `${forecastDate} 午前6時30分` : "午前6時30分";
-  ids.forecast18Label.textContent = forecastDate ? `${forecastDate} 午後6時30分` : "午後6時30分";
+  ids.forecast6Label.textContent = forecastDate ? `昼の予想 (${forecastDate})` : "昼の予想 (6:30〜18:30)";
+  ids.forecast18Label.textContent = forecastDate ? `夜の予想 (${forecastDate})` : "夜の予想 (18:30〜23:30)";
   ids.latestNav.textContent = `${yen.format(data.fund.nav)}円`;
   setChange(ids.actualChange, data.fund.actualChange, data.fund.actualChangePct);
   renderChart(data);
@@ -132,16 +134,27 @@ function render(data) {
     const isMorning = forecast.slot === "06:30";
     const valueNode = isMorning ? ids.forecast6 : ids.forecast18;
     const changeNode = isMorning ? ids.change6 : ids.change18;
+    const timeNode = isMorning ? ids.time6 : ids.time18;
+
     if (nextForecastWindow) {
       setPending(valueNode, changeNode, `${rawForecastDate} ${forecast.slot}更新後に表示します。`);
+      timeNode.textContent = "";
       continue;
     }
     if (forecast.status !== "ready") {
       setPending(valueNode, changeNode, forecast.message || "更新後に表示します。");
+      timeNode.textContent = "";
       continue;
     }
     valueNode.textContent = `${yen.format(forecast.predictedNav)}円`;
     setChange(changeNode, forecast.change, forecast.changePct);
+
+    if (forecast.asOf) {
+      const d = new Date(forecast.asOf);
+      timeNode.textContent = `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")} 更新`;
+    } else {
+      timeNode.textContent = "";
+    }
   }
 
   setPercent(ids.acwiReturn, data.market.acwi.return);

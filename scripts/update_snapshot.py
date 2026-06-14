@@ -185,7 +185,7 @@ def fund_history(fund: dict) -> list[dict]:
     return points[-31:]
 
 
-def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
+def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict, as_of: str) -> dict:
     combined_return = acwi["return"] + fx["return"]
     predicted = fund["value"] * (1 + combined_return)
     return {
@@ -194,6 +194,7 @@ def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict) -> dict:
         "predictedNav": round(predicted),
         "change": round(predicted - fund["value"]),
         "changePct": combined_return,
+        "asOf": as_of,
         "drivers": {
             "acwiReturn": acwi["return"],
             "fxReturn": fx["return"],
@@ -209,6 +210,7 @@ def pending_forecast(slot: str, message: str) -> dict:
         "predictedNav": None,
         "change": None,
         "changePct": None,
+        "asOf": None,
         "drivers": {
             "acwiReturn": None,
             "fxReturn": None,
@@ -255,11 +257,12 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
             if forecast.get("slot") in forecasts and forecast.get("status") == "ready":
                 forecasts[forecast["slot"]] = forecast
 
+    as_of_str = now.isoformat(timespec="seconds")
     if current_slot == "06:30":
-        forecasts["06:30"] = estimate(6, fund, acwi, fx)
+        forecasts["06:30"] = estimate(6, fund, acwi, fx, as_of_str)
         forecasts["18:30"] = pending_forecast("18:30", f"{forecast_date} 18:30更新後に表示します。")
     elif current_slot == "18:30":
-        forecasts["18:30"] = estimate(18, fund, acwi, fx)
+        forecasts["18:30"] = estimate(18, fund, acwi, fx, as_of_str)
 
     return [forecasts["06:30"], forecasts["18:30"]]
 
