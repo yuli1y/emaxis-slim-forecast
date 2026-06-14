@@ -321,10 +321,12 @@ def already_updated_for_slot(snapshot: dict, existing: dict | None) -> bool:
 
 
 def main() -> None:
+    import os
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     existing = load_existing_snapshot()
     snapshot = build_snapshot()
-    if already_updated_for_slot(snapshot, existing):
+    is_manual = os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+    if not is_manual and already_updated_for_slot(snapshot, existing):
         print(f"Snapshot already updated for {snapshot['currentSlot']} on {snapshot['forecastDate']}")
         return
     DATA_PATH.write_text(
