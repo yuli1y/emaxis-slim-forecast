@@ -383,7 +383,6 @@ h1 {
 }
 
 .trigger-button {
-  background: none;
   border: none;
   color: #0f766e;
   text-decoration: underline;
@@ -397,11 +396,6 @@ h1 {
 }
 .trigger-button:hover {
   background-color: rgba(15, 118, 110, 0.15);
-}
-.trigger-button:disabled {
-  color: var(--muted);
-  cursor: not-allowed;
-  background-color: transparent;
 }
 
 .forecast-time {

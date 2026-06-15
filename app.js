@@ -191,44 +191,8 @@ async function load() {
 ids.refresh.addEventListener("click", load);
 load();
 
-const triggerBtn = document.querySelector("#trigger-workflow");
-if (triggerBtn) {
-  triggerBtn.addEventListener("click", async () => {
-    let token = localStorage.getItem("github_pat");
-    if (!token) {
-      token = prompt(
-        "GitHubの個人用アクセストークン(PAT)を入力してください。\n" +
-        "※トークンはあなたのブラウザ内(localStorage)にのみ安全に保存されます。\n" +
-        "※手順：Settings ➔ Developer settings ➔ Personal access tokens (classic) ➔ repo & workflow 権限をチェックして生成してください。"
-      );
-      if (!token) return;
-      token = token.trim();
-      localStorage.setItem("github_pat", token);
-    }
-
-    triggerBtn.disabled = true;
-    triggerBtn.textContent = "更新中...";
-    try {
-      const res = await fetch("https://api.github.com/repos/yuli1y/emaxis-slim-forecast/actions/workflows/update-snapshot.yml/dispatches", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Accept": "application/vnd.github+json",
-        },
-        body: JSON.stringify({ ref: "main" })
-      });
-      if (res.status === 204) {
-        alert("更新リクエストを送信しました！\nGitHub Actionsが起動します。約30秒後に右上の「↻」ボタンを押して再読み込みしてください。");
-      } else {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || `エラーコード: ${res.status}`);
-      }
-    } catch (e) {
-      alert(`エラーが発生しました:\n${e.message}\nトークンが無効である可能性があります。再入力してください。`);
-      localStorage.removeItem("github_pat");
-    } finally {
-      triggerBtn.disabled = false;
-      triggerBtn.textContent = "今すぐ更新";
-    }
-  });
+try {
+  localStorage.removeItem("github_pat");
+} catch {
+  // Ignore storage restrictions; the app itself can still run.
 }

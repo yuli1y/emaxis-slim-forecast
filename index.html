@@ -8,7 +8,7 @@
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icon.svg" />
     <link rel="manifest" href="site.webmanifest" />
-    <link rel="stylesheet" href="styles.css?v=20260611-chart" />
+    <link rel="stylesheet" href="styles.css?v=20260615-manual-link" />
   </head>
   <body>
     <main class="shell">
@@ -87,7 +87,13 @@
         <div>
           <span>更新時刻</span>
           <strong id="as-of">--</strong>
-          <button id="trigger-workflow" class="trigger-button" type="button">今すぐ更新</button>
+          <a
+            id="trigger-workflow"
+            class="trigger-button"
+            href="https://github.com/yuli1y/emaxis-slim-forecast/actions/workflows/update-snapshot.yml"
+            target="_blank"
+            rel="noopener"
+          >手動更新</a>
         </div>
       </section>
 
@@ -100,6 +106,6 @@
       <p id="error" class="error" hidden></p>
     </main>
 
-    <script src="app.js?v=20260613-error"></script>
+    <script src="app.js?v=20260615-manual-link"></script>
   </body>
 </html>
