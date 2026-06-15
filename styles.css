@@ -221,21 +221,24 @@ h1 {
 }
 
 .forecast-value-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
+  display: block;
   min-width: 0;
   margin-top: 18px;
 }
 
 .forecast strong {
+  display: block;
   margin-top: 0;
-  font-size: clamp(26px, 3.5vw, 36px);
+  font-size: clamp(24px, 2.6vw, 34px);
+  line-height: 1.05;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  white-space: nowrap;
 }
 
 .forecast .change {
   min-height: 28px;
-  margin-top: 0;
+  margin-top: 10px;
   font-size: 13px;
 }
 
