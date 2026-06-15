@@ -7,6 +7,7 @@ const pct = new Intl.NumberFormat("ja-JP", {
 
 const ids = {
   navDate: document.querySelector("#nav-date"),
+  forecastTargetDate: document.querySelector("#forecast-target-date"),
   latestNav: document.querySelector("#latest-nav"),
   actualChange: document.querySelector("#actual-change"),
   forecast6Label: document.querySelector("#forecast-6-label"),
@@ -123,6 +124,7 @@ function render(data) {
   ids.navDate.textContent = `基準日 ${data.fund.navDate}`;
   const rawForecastDate = data.forecastDate || nextBusinessDate(data.fund.navDate);
   const forecastDate = rawForecastDate ? shortDate(rawForecastDate) : "";
+  ids.forecastTargetDate.textContent = rawForecastDate ? `予想対象 ${rawForecastDate}` : "予想対象 --";
   ids.forecast6Label.textContent = forecastDate ? `昼の予想 (${forecastDate})` : "昼の予想 (6:00〜18:00)";
   ids.forecast18Label.textContent = forecastDate ? `夜の予想 (${forecastDate})` : "夜の予想 (18:00〜23:00)";
   ids.latestNav.textContent = `${yen.format(data.fund.nav)}円`;

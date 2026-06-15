@@ -183,6 +183,14 @@ h1 {
   color: #fff;
 }
 
+.target-date {
+  display: block;
+  margin-top: 14px;
+  color: #c5d9d3;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .gain {
   color: var(--gain);
   background: #e4f5eb;
@@ -366,7 +374,10 @@ h1 {
     padding: 4px 10px;
   }
 
-
+  .target-date {
+    margin-top: 10px;
+    font-size: 11px;
+  }
 
   .nav-row {
     align-items: flex-start;
