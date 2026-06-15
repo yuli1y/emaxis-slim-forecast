@@ -293,7 +293,7 @@ def accuracy_summary(forecast_history: list[dict]) -> dict:
 
 
 def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict, as_of: str) -> dict:
-    combined_return = acwi["return"] + fx["return"]
+    combined_return = (1 + acwi["return"]) * (1 + fx["return"]) - 1
     predicted = fund["value"] * (1 + combined_return)
     return {
         "slot": f"{slot_hour:02d}:00",
@@ -395,7 +395,7 @@ def build_snapshot() -> dict:
 
     method = (
         "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率を"
-        "単純加算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。"
+        "それぞれ乗算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。"
         f" 目安として推計値の±{ESTIMATED_ERROR_PCT:.0%}程度ずれる可能性があります。"
     )
     if market_errors:

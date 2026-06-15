@@ -2,13 +2,15 @@ name: Update forecast snapshot
 
 on:
   schedule:
-    # 6:30, 18:30, and 23:30 JST (Fractions for reliability). GitHub Actions uses UTC.
-    - cron: "17 21 * * *"
-    - cron: "27 21 * * *"
-    - cron: "17 9 * * *"
-    - cron: "27 9 * * *"
-    - cron: "17 14 * * *"
-    - cron: "27 14 * * *"
+    # JST 6:17 and 6:27 on weekdays (Mon-Fri JST = Sun-Thu UTC due to +9h offset)
+    - cron: "17 21 * * 0-4"
+    - cron: "27 21 * * 0-4"
+    # JST 18:17 and 18:27 on weekdays
+    - cron: "17 9 * * 1-5"
+    - cron: "27 9 * * 1-5"
+    # JST 23:17 and 23:27 on weekdays
+    - cron: "17 14 * * 1-5"
+    - cron: "27 14 * * 1-5"
   workflow_dispatch:
 
 permissions:
