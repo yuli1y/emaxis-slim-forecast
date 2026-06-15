@@ -214,17 +214,28 @@ h1 {
 }
 
 .forecast {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   min-height: 128px;
   padding: 14px;
 }
 
-.forecast strong {
+.forecast-value-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  min-width: 0;
   margin-top: 18px;
+}
+
+.forecast strong {
+  margin-top: 0;
   font-size: clamp(26px, 3.5vw, 36px);
 }
 
 .forecast .change {
   min-height: 28px;
+  margin-top: 0;
   font-size: 13px;
 }
 
@@ -366,21 +377,30 @@ h1 {
   }
 
   .forecast {
-    min-height: 88px;
+    height: 112px;
+    min-height: 112px;
     padding: 10px 12px;
   }
 
+  .forecast-value-row {
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
   .forecast strong {
-    display: inline-block;
-    margin-top: 10px;
+    display: block;
+    flex: 0 0 auto;
     font-size: 30px;
   }
 
   .forecast .change {
+    flex: 0 1 auto;
     min-height: 24px;
-    margin-top: 6px;
+    margin-top: 0;
     padding: 3px 8px;
     font-size: 12px;
+    white-space: nowrap;
   }
 
   .target-date {
