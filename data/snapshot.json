@@ -1,6 +1,6 @@
 {
-  "asOf": "2026-06-15T23:22:08+09:00",
-  "forecastDate": "2026/06/15",
+  "asOf": "2026-06-16T04:12:40+09:00",
+  "forecastDate": "2026/06/16",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
     "symbol": "0331418A",
@@ -142,20 +142,20 @@
       "symbol": "ACWI",
       "label": "ACWI ETF",
       "date": "2026-06-15",
-      "value": 157.86000061035156,
+      "value": 158.10000610351562,
       "previousDate": "2026-06-12",
       "previousValue": 156.47000122070312,
-      "return": 0.008883488073140766,
+      "return": 0.010417363520777156,
       "error": ""
     },
     "usdJpy": {
       "symbol": "JPY=X",
       "label": "USD/JPY",
-      "date": "2026-06-15",
-      "value": 160.06100463867188,
+      "date": "2026-06-16",
+      "value": 160.33200073242188,
       "previousDate": "2026-06-12",
       "previousValue": 160.1300048828125,
-      "return": -0.00043090140533696975,
+      "return": 0.0012614490941731393,
       "error": ""
     }
   },
@@ -163,7 +163,7 @@
     {
       "slot": "06:00",
       "status": "pending",
-      "message": "2026/06/15 06:00更新後に表示します。",
+      "message": "2026/06/16 06:00更新後に表示します。",
       "predictedNav": null,
       "change": null,
       "changePct": null,
@@ -176,7 +176,7 @@
     {
       "slot": "18:00",
       "status": "pending",
-      "message": "2026/06/15 18:00更新後に表示します。",
+      "message": "2026/06/16 18:00更新後に表示します。",
       "predictedNav": null,
       "change": null,
       "changePct": null,
