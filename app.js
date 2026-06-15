@@ -191,6 +191,20 @@ async function load() {
 ids.refresh.addEventListener("click", load);
 load();
 
+const triggerWorkflow = document.querySelector("#trigger-workflow");
+if (triggerWorkflow) {
+  triggerWorkflow.addEventListener("click", (event) => {
+    const confirmed = confirm(
+      "GitHub Actionsの手動更新ページを開きます。\n\n" +
+        "開いたページで「Run workflow」を押すと、最新データの取得が始まります。\n" +
+        "更新完了後、このアプリに戻って右上の更新ボタンを押してください。",
+    );
+    if (!confirmed) {
+      event.preventDefault();
+    }
+  });
+}
+
 try {
   localStorage.removeItem("github_pat");
 } catch {
