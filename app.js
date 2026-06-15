@@ -22,6 +22,7 @@ const ids = {
   fxReturn: document.querySelector("#fx-return"),
   asOf: document.querySelector("#as-of"),
   method: document.querySelector("#method"),
+  accuracySummary: document.querySelector("#accuracy-summary"),
   error: document.querySelector("#error"),
   refresh: document.querySelector("#refresh"),
   chartArea: document.querySelector("#chart-area"),
@@ -56,7 +57,17 @@ function setPending(valueNode, changeNode, message) {
   changeNode.classList.remove("gain", "loss");
 }
 
-
+function renderAccuracySummary(data) {
+  const summary = data.accuracy?.summary;
+  if (!summary || !summary.sampleSize) {
+    ids.accuracySummary.textContent = "過去誤差: 予想と実績の比較データを蓄積中です。";
+    return;
+  }
+  ids.accuracySummary.textContent =
+    `過去誤差: ${summary.label} / ` +
+    `直近${summary.sampleSize}件の平均 ±${yen.format(summary.meanAbsErrorYen)}円 ` +
+    `(${pct.format(summary.meanAbsErrorPct)})`;
+}
 
 function shortDate(dateText) {
   const parts = dateText.split("/");
@@ -166,6 +177,7 @@ function render(data) {
     timeStyle: "medium",
   });
   ids.method.textContent = data.method;
+  renderAccuracySummary(data);
 
   document.querySelectorAll(".forecast").forEach((panel) => {
     panel.classList.toggle("active", !nextForecastWindow && panel.dataset.slot === data.currentSlot);

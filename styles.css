@@ -279,6 +279,13 @@ h1 {
   font-size: 13px;
 }
 
+.note .accuracy-summary {
+  margin-top: 8px;
+  color: #4d5a52;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .error {
   padding: 14px 16px;
   border-radius: 8px;

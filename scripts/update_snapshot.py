@@ -18,6 +18,8 @@ FUND_CODE = "0331418A"
 ACWI_SYMBOL = "ACWI"
 FX_SYMBOL = "JPY=X"
 ESTIMATED_ERROR_PCT = 0.01
+MAX_FORECAST_HISTORY = 60
+ACCURACY_WINDOW = 20
 
 
 def fetch_json(url: str, extra_headers: dict | None = None) -> dict:
@@ -185,6 +187,111 @@ def fund_history(fund: dict) -> list[dict]:
     return points[-31:]
 
 
+def date_key(date_text: str | None) -> str:
+    return (date_text or "").replace("/", "-")
+
+
+def actual_nav_by_date(fund: dict, history: list[dict]) -> dict[str, int]:
+    actuals = {}
+    for point in history:
+        date = date_key(point.get("date"))
+        value = point.get("value")
+        if date and isinstance(value, (int, float)) and math.isfinite(float(value)):
+            actuals[date] = round(value)
+    actuals[date_key(fund["date"])] = round(fund["value"])
+    return actuals
+
+
+def forecast_record_key(record: dict) -> tuple[str, str]:
+    return (date_key(record.get("forecastDate")), record.get("slot") or "")
+
+
+def updated_forecast_history(
+    existing: dict | None,
+    forecasts: list[dict],
+    forecast_date: str,
+    fund: dict,
+    history: list[dict],
+    as_of: str,
+) -> list[dict]:
+    existing_records = ((existing or {}).get("accuracy") or {}).get("forecastHistory") or []
+    records = {
+        forecast_record_key(record): dict(record)
+        for record in existing_records
+        if record.get("forecastDate") and record.get("slot")
+    }
+    actuals = actual_nav_by_date(fund, history)
+
+    for forecast in forecasts:
+        if forecast.get("status") != "ready" or not forecast.get("predictedNav"):
+            continue
+        record = {
+            "forecastDate": date_key(forecast_date),
+            "slot": forecast["slot"],
+            "predictedNav": round(forecast["predictedNav"]),
+            "predictedAt": forecast.get("asOf") or as_of,
+            "baseNavDate": date_key(fund["date"]),
+            "baseNav": round(fund["value"]),
+        }
+        key = forecast_record_key(record)
+        previous = records.get(key, {})
+        for field in ("actualNav", "errorYen", "errorPct", "evaluatedAt"):
+            if previous.get(field) is not None:
+                record[field] = previous[field]
+        records[key] = record
+
+    evaluated = []
+    for record in records.values():
+        actual = actuals.get(date_key(record.get("forecastDate")))
+        if actual and record.get("actualNav") is None:
+            record["actualNav"] = actual
+            record["errorYen"] = round(record["predictedNav"] - actual)
+            record["errorPct"] = record["errorYen"] / actual
+            record["evaluatedAt"] = as_of
+        evaluated.append(record)
+
+    evaluated.sort(key=lambda item: (date_key(item.get("forecastDate")), item.get("slot") or ""))
+    return evaluated[-MAX_FORECAST_HISTORY:]
+
+
+def accuracy_summary(forecast_history: list[dict]) -> dict:
+    evaluated = [
+        record
+        for record in forecast_history
+        if isinstance(record.get("errorYen"), (int, float)) and isinstance(record.get("errorPct"), (int, float))
+    ]
+    samples = evaluated[-ACCURACY_WINDOW:]
+    if not samples:
+        return {
+            "sampleSize": 0,
+            "window": ACCURACY_WINDOW,
+            "meanAbsErrorYen": None,
+            "meanAbsErrorPct": None,
+            "label": "蓄積中",
+            "message": "予想と実績の比較データを蓄積中です。",
+        }
+
+    mean_abs_error_yen = sum(abs(record["errorYen"]) for record in samples) / len(samples)
+    mean_abs_error_pct = sum(abs(record["errorPct"]) for record in samples) / len(samples)
+    if len(samples) < 3:
+        label = "蓄積中"
+    elif mean_abs_error_pct <= 0.005:
+        label = "通常"
+    elif mean_abs_error_pct <= 0.01:
+        label = "注意"
+    else:
+        label = "大きめ"
+
+    return {
+        "sampleSize": len(samples),
+        "window": ACCURACY_WINDOW,
+        "meanAbsErrorYen": int(mean_abs_error_yen + 0.5),
+        "meanAbsErrorPct": mean_abs_error_pct,
+        "label": label,
+        "message": f"直近{len(samples)}件の平均絶対誤差です。",
+    }
+
+
 def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict, as_of: str) -> dict:
     combined_return = acwi["return"] + fx["return"]
     predicted = fund["value"] * (1 + combined_return)
@@ -268,14 +375,23 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
 
 
 def build_snapshot() -> dict:
+    existing = load_existing_snapshot()
     fund_data = fetch_fund_data_from_nikkei()
     fund = latest_fund_price(fund_data)
     history = fund_history(fund)
     acwi = latest_market_price(ACWI_SYMBOL, "ACWI ETF")
     fx = latest_market_price(FX_SYMBOL, "USD/JPY")
     now = datetime.now(JST)
+    as_of = now.isoformat(timespec="seconds")
+    forecast_date = now.strftime("%Y/%m/%d")
     slot = active_slot(now)
     market_errors = [item["error"] for item in (acwi, fx) if item.get("error")]
+    forecasts = build_forecasts(now, fund, acwi, fx)
+    forecast_history = updated_forecast_history(existing, forecasts, forecast_date, fund, history, as_of)
+    accuracy = {
+        "forecastHistory": forecast_history,
+        "summary": accuracy_summary(forecast_history),
+    }
 
     method = (
         "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率を"
@@ -286,8 +402,8 @@ def build_snapshot() -> dict:
         method += " 一部のマーケット材料を取得できなかったため、その材料の変化率は0%として表示しています。"
 
     return {
-        "asOf": now.isoformat(timespec="seconds"),
-        "forecastDate": now.strftime("%Y/%m/%d"),
+        "asOf": as_of,
+        "forecastDate": forecast_date,
         "fund": {
             "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
             "symbol": FUND_CODE,
@@ -303,7 +419,8 @@ def build_snapshot() -> dict:
             "acwi": acwi,
             "usdJpy": fx,
         },
-        "forecasts": build_forecasts(now, fund, acwi, fx),
+        "forecasts": forecasts,
+        "accuracy": accuracy,
         "currentSlot": slot,
         "method": method,
         "marketErrors": market_errors,
