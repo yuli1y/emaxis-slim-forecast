@@ -393,8 +393,10 @@ h1 {
   }
 
   .forecast-value-row {
-    align-items: center;
-    gap: 10px;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 10px;
     margin-top: 8px;
   }
 
@@ -405,12 +407,12 @@ h1 {
   }
 
   .forecast .change {
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     min-height: 24px;
     margin-top: 0;
     padding: 3px 8px;
     font-size: 12px;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .target-date {
