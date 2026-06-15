@@ -118,42 +118,37 @@ def latest_market_price(symbol: str, label: str) -> dict:
         }
 
 
-def fetch_fund_data_from_nikkei() -> dict:
-    url = f"https://www.nikkei.com/nkd/fund/?fcode={FUND_CODE}"
+def fetch_fund_data_from_minkabu() -> dict:
+    url = f"https://itf.minkabu.jp/fund/{FUND_CODE}"
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+        headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        },
     )
     with urllib.request.urlopen(req, timeout=20) as response:
         html = response.read().decode("utf-8")
-        
-    date_match = re.search(r"<dt class=\"m-stockPriceElm_title\">基準価格\((.*?)\)：</dt>", html)
+
+    # meta description から基準価額・前日比・変化率を一括取得
+    # 例: "基準価額37147.0円、前日比+433.0（+1.18%）"
+    desc_match = re.search(
+        r"基準価額([\d,\.]+)円、前日比([+\-\d,\.]+)（([+\-\d,\.]+)%）",
+        html,
+    )
+    if not desc_match:
+        raise RuntimeError("みんかぶのページから基準価額を取得できませんでした")
+    nav = float(desc_match.group(1).replace(",", ""))
+    change = float(desc_match.group(2).replace(",", ""))
+    change_rate = float(desc_match.group(3).replace(",", "")) / 100
+
+    # JSON-LD の dateModified から基準日を取得
+    # 例: "dateModified": "2026-06-12"
+    date_match = re.search(r'"dateModified"\s*:\s*"(\d{4}-\d{2}-\d{2})"', html)
     if not date_match:
-        raise RuntimeError("日経新聞のページから基準日を取得できませんでした")
-    date_text = date_match.group(1)
-    month, day = map(int, date_text.split("/"))
-    now = datetime.now(JST)
-    year = now.year
-    if now.month == 1 and month == 12:
-        year -= 1
-    date_formatted = f"{year}/{month:02d}/{day:02d}"
-    
-    price_match = re.search(r"<dd class=\"m-stockPriceElm_value now\">([\d,]+)", html)
-    if not price_match:
-        raise RuntimeError("日経新聞のページから基準価格を取得できませんでした")
-    nav = float(price_match.group(1).replace(",", ""))
-    
-    change_match = re.search(r"<dt class=\"m-stockPriceElm_title\">前日比：</dt>\s*<dd class=\"[^\"]*\">([+\-\d,]+)", html)
-    if not change_match:
-        raise RuntimeError("日経新聞のページから前日比を取得できませんでした")
-    change = float(change_match.group(1).replace(",", ""))
-    
-    change_idx = change_match.end()
-    pct_match = re.search(r"\(([+\-\d\.,]+)%\)", html[change_idx:change_idx+100])
-    if not pct_match:
-        raise RuntimeError("日経新聞のページから前日比率を取得できませんでした")
-    change_rate = float(pct_match.group(1)) / 100
-    
+        raise RuntimeError("みんかぶのページから基準日を取得できませんでした")
+    date_formatted = date_match.group(1).replace("-", "/")
+
     return {
         "symbol": FUND_CODE,
         "date": date_formatted,
@@ -161,8 +156,7 @@ def fetch_fund_data_from_nikkei() -> dict:
         "previousValue": nav - change,
         "return": change_rate,
         "change": change,
-        "source": "日本経済新聞",
-        "jwtToken": "",
+        "source": "みんかぶ",
     }
 
 
@@ -376,7 +370,7 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
 
 def build_snapshot() -> dict:
     existing = load_existing_snapshot()
-    fund_data = fetch_fund_data_from_nikkei()
+    fund_data = fetch_fund_data_from_minkabu()
     fund = latest_fund_price(fund_data)
     history = fund_history(fund)
     acwi = latest_market_price(ACWI_SYMBOL, "ACWI ETF")
