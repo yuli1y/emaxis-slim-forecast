@@ -4,10 +4,12 @@ from __future__ import annotations
 import json
 import math
 import re
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,6 +24,31 @@ MAX_FORECAST_HISTORY = 60
 ACCURACY_WINDOW = 20
 
 
+def open_url_with_retry(request: urllib.request.Request, *, attempts: int = 3, base_delay: float = 15.0) -> bytes:
+    last_exc: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                return response.read()
+        except HTTPError as exc:
+            last_exc = exc
+            retriable = 500 <= exc.code < 600
+            if not retriable or attempt == attempts:
+                raise
+            wait_seconds = base_delay * attempt
+            print(f"Retrying {request.full_url} after HTTP {exc.code} (attempt {attempt}/{attempts}) in {wait_seconds:.0f}s")
+            time.sleep(wait_seconds)
+        except URLError as exc:
+            last_exc = exc
+            if attempt == attempts:
+                raise
+            wait_seconds = base_delay * attempt
+            print(f"Retrying {request.full_url} after network error ({exc.reason}) (attempt {attempt}/{attempts}) in {wait_seconds:.0f}s")
+            time.sleep(wait_seconds)
+    assert last_exc is not None
+    raise last_exc
+
+
 def fetch_json(url: str, extra_headers: dict | None = None) -> dict:
     headers = {
         "User-Agent": "Mozilla/5.0 emaxis-slim-forecast/1.0",
@@ -29,12 +56,8 @@ def fetch_json(url: str, extra_headers: dict | None = None) -> dict:
     }
     if extra_headers:
         headers.update(extra_headers)
-    request = urllib.request.Request(
-        url,
-        headers=headers,
-    )
-    with urllib.request.urlopen(request, timeout=20) as response:
-        return json.loads(response.read().decode("utf-8"))
+    request = urllib.request.Request(url, headers=headers)
+    return json.loads(open_url_with_retry(request).decode("utf-8"))
 
 
 def fetch_text(url: str) -> str:
@@ -45,8 +68,7 @@ def fetch_text(url: str) -> str:
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         },
     )
-    with urllib.request.urlopen(request, timeout=20) as response:
-        return response.read().decode("utf-8")
+    return open_url_with_retry(request).decode("utf-8")
 
 
 def parse_number(value: str | int | float) -> float:
