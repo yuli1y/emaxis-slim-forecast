@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-06-26T06:00:26+09:00",
+  "asOf": "2026-06-26T18:00:31+09:00",
   "forecastDate": "2026/06/26",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
@@ -152,10 +152,10 @@
       "symbol": "JPY=X",
       "label": "USD/JPY",
       "date": "2026-06-26",
-      "value": 161.7550048828125,
+      "value": 161.59100341796875,
       "previousDate": "2026-06-25",
       "previousValue": 161.76300048828125,
-      "return": -4.942790035189493e-05,
+      "return": -0.0010632658258892258,
       "error": ""
     }
   },
@@ -174,15 +174,14 @@
     },
     {
       "slot": "18:00",
-      "status": "pending",
-      "message": "2026/06/26 18:00更新後に表示します。",
-      "predictedNav": null,
-      "change": null,
-      "changePct": null,
-      "asOf": null,
+      "status": "ready",
+      "predictedNav": 37732,
+      "change": 75,
+      "changePct": 0.001980898717151014,
+      "asOf": "2026-06-26T18:00:31+09:00",
       "drivers": {
-        "acwiReturn": null,
-        "fxReturn": null
+        "acwiReturn": 0.003047404744362492,
+        "fxReturn": -0.0010632658258892258
       }
     }
   ],
@@ -435,6 +434,14 @@
         "predictedAt": "2026-06-26T06:00:26+09:00",
         "baseNavDate": "2026-06-25",
         "baseNav": 37657
+      },
+      {
+        "forecastDate": "2026-06-26",
+        "slot": "18:00",
+        "predictedNav": 37732,
+        "predictedAt": "2026-06-26T18:00:31+09:00",
+        "baseNavDate": "2026-06-25",
+        "baseNav": 37657
       }
     ],
     "summary": {
@@ -446,7 +453,7 @@
       "message": "直近20件の平均絶対誤差です。"
     }
   },
-  "currentSlot": "06:00",
+  "currentSlot": "18:00",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率をそれぞれ乗算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。 目安として推計値の±1%程度ずれる可能性があります。",
   "marketErrors": []
 }
