@@ -1,20 +1,16 @@
 {
-  "asOf": "2026-07-06T18:00:18+09:00",
+  "asOf": "2026-07-06T23:00:19+09:00",
   "forecastDate": "2026/07/06",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
     "symbol": "0331418A",
-    "navDate": "2026/07/03",
-    "nav": 38009,
-    "previousNav": 38267,
-    "actualChange": -258,
-    "actualChangePct": -0.0067,
+    "navDate": "2026/07/06",
+    "nav": 38252,
+    "previousNav": 38009,
+    "actualChange": 243,
+    "actualChangePct": 0.0064,
     "source": "みんかぶ",
     "history": [
-      {
-        "date": "2026-05-22",
-        "value": 37074.0
-      },
       {
         "date": "2026-05-25",
         "value": 37225.0
@@ -134,6 +130,10 @@
       {
         "date": "2026-07-03",
         "value": 38009.0
+      },
+      {
+        "date": "2026-07-06",
+        "value": 38252.0
       }
     ]
   },
@@ -141,47 +141,49 @@
     "acwi": {
       "symbol": "ACWI",
       "label": "ACWI ETF",
-      "date": "2026-07-02",
-      "value": 156.14999389648438,
-      "previousDate": "2026-07-01",
-      "previousValue": 156.1199951171875,
-      "return": 0.0001921520640220109,
+      "date": "2026-07-06",
+      "value": 157.3800048828125,
+      "previousDate": "2026-07-02",
+      "previousValue": 156.14999389648438,
+      "return": 0.007877111971861694,
       "error": ""
     },
     "usdJpy": {
       "symbol": "JPY=X",
       "label": "USD/JPY",
       "date": "2026-07-06",
-      "value": 162.24600219726562,
+      "value": 162.33999633789062,
       "previousDate": "2026-07-03",
       "previousValue": 161.44900512695312,
-      "return": 0.0049365251256010545,
+      "return": 0.005518716019568437,
       "error": ""
     }
   },
   "forecasts": [
     {
       "slot": "06:00",
-      "status": "ready",
-      "predictedNav": 38175,
-      "change": 166,
-      "changePct": 0.004367622088545797,
-      "asOf": "2026-07-06T15:46:24+09:00",
+      "status": "pending",
+      "message": "2026/07/06 06:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": 0.0001921520640220109,
-        "fxReturn": 0.004174667853479086
+        "acwiReturn": null,
+        "fxReturn": null
       }
     },
     {
       "slot": "18:00",
-      "status": "ready",
-      "predictedNav": 38204,
-      "change": 195,
-      "changePct": 0.005129625753115041,
-      "asOf": "2026-07-06T18:00:18+09:00",
+      "status": "pending",
+      "message": "2026/07/06 18:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": 0.0001921520640220109,
-        "fxReturn": 0.0049365251256010545
+        "acwiReturn": null,
+        "fxReturn": null
       }
     }
   ],
@@ -577,7 +579,11 @@
         "predictedNav": 38175,
         "predictedAt": "2026-07-06T15:46:24+09:00",
         "baseNavDate": "2026-07-03",
-        "baseNav": 38009
+        "baseNav": 38009,
+        "actualNav": 38252,
+        "errorYen": -77,
+        "errorPct": -0.002012966642267071,
+        "evaluatedAt": "2026-07-06T23:00:19+09:00"
       },
       {
         "forecastDate": "2026-07-06",
@@ -585,19 +591,23 @@
         "predictedNav": 38204,
         "predictedAt": "2026-07-06T18:00:18+09:00",
         "baseNavDate": "2026-07-03",
-        "baseNav": 38009
+        "baseNav": 38009,
+        "actualNav": 38252,
+        "errorYen": -48,
+        "errorPct": -0.001254836348426226,
+        "evaluatedAt": "2026-07-06T23:00:19+09:00"
       }
     ],
     "summary": {
       "sampleSize": 20,
       "window": 20,
-      "meanAbsErrorYen": 128,
-      "meanAbsErrorPct": 0.003355690115969778,
+      "meanAbsErrorYen": 90,
+      "meanAbsErrorPct": 0.002376961537367859,
       "label": "通常",
       "message": "直近20件の平均絶対誤差です。"
     }
   },
-  "currentSlot": "18:00",
+  "currentSlot": "next",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率をそれぞれ乗算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。 目安として推計値の±1%程度ずれる可能性があります。",
   "marketErrors": []
 }
