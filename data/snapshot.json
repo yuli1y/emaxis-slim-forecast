@@ -1,20 +1,16 @@
 {
-  "asOf": "2026-07-07T18:00:20+09:00",
+  "asOf": "2026-07-07T23:00:22+09:00",
   "forecastDate": "2026/07/07",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
     "symbol": "0331418A",
-    "navDate": "2026/07/06",
-    "nav": 38252,
-    "previousNav": 38009,
-    "actualChange": 243,
-    "actualChangePct": 0.0064,
+    "navDate": "2026/07/07",
+    "nav": 38532,
+    "previousNav": 38252,
+    "actualChange": 280,
+    "actualChangePct": 0.0073,
     "source": "みんかぶ",
     "history": [
-      {
-        "date": "2026-05-25",
-        "value": 37225.0
-      },
       {
         "date": "2026-05-26",
         "value": 37380.0
@@ -134,6 +130,10 @@
       {
         "date": "2026-07-06",
         "value": 38252.0
+      },
+      {
+        "date": "2026-07-07",
+        "value": 38532.0
       }
     ]
   },
@@ -141,47 +141,49 @@
     "acwi": {
       "symbol": "ACWI",
       "label": "ACWI ETF",
-      "date": "2026-07-06",
-      "value": 157.97000122070312,
-      "previousDate": "2026-07-02",
-      "previousValue": 156.14999389648438,
-      "return": 0.011655506854680198,
+      "date": "2026-07-07",
+      "value": 156.89999389648438,
+      "previousDate": "2026-07-06",
+      "previousValue": 157.97000122070312,
+      "return": -0.006773484306832556,
       "error": ""
     },
     "usdJpy": {
       "symbol": "JPY=X",
       "label": "USD/JPY",
       "date": "2026-07-07",
-      "value": 161.89999389648438,
+      "value": 161.87899780273438,
       "previousDate": "2026-07-06",
       "previousValue": 161.45199584960938,
-      "return": 0.0027748064959958185,
+      "return": 0.0026447610689355194,
       "error": ""
     }
   },
   "forecasts": [
     {
       "slot": "06:00",
-      "status": "ready",
-      "predictedNav": 38841,
-      "change": 589,
-      "changePct": 0.015408824721531378,
-      "asOf": "2026-07-07T06:00:18+09:00",
+      "status": "pending",
+      "message": "2026/07/07 06:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": 0.011655506854680198,
-        "fxReturn": 0.0037100750615399747
+        "acwiReturn": null,
+        "fxReturn": null
       }
     },
     {
       "slot": "18:00",
-      "status": "ready",
-      "predictedNav": 38805,
-      "change": 553,
-      "changePct": 0.014462655126810553,
-      "asOf": "2026-07-07T18:00:20+09:00",
+      "status": "pending",
+      "message": "2026/07/07 18:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": 0.011655506854680198,
-        "fxReturn": 0.0027748064959958185
+        "acwiReturn": null,
+        "fxReturn": null
       }
     }
   ],
@@ -601,7 +603,11 @@
         "predictedNav": 38841,
         "predictedAt": "2026-07-07T06:00:18+09:00",
         "baseNavDate": "2026-07-06",
-        "baseNav": 38252
+        "baseNav": 38252,
+        "actualNav": 38532,
+        "errorYen": 309,
+        "errorPct": 0.008019308626596076,
+        "evaluatedAt": "2026-07-07T23:00:22+09:00"
       },
       {
         "forecastDate": "2026-07-07",
@@ -609,19 +615,23 @@
         "predictedNav": 38805,
         "predictedAt": "2026-07-07T18:00:20+09:00",
         "baseNavDate": "2026-07-06",
-        "baseNav": 38252
+        "baseNav": 38252,
+        "actualNav": 38532,
+        "errorYen": 273,
+        "errorPct": 0.00708502024291498,
+        "evaluatedAt": "2026-07-07T23:00:22+09:00"
       }
     ],
     "summary": {
       "sampleSize": 20,
       "window": 20,
-      "meanAbsErrorYen": 90,
-      "meanAbsErrorPct": 0.002376961537367859,
+      "meanAbsErrorYen": 115,
+      "meanAbsErrorPct": 0.0030197185185565616,
       "label": "通常",
       "message": "直近20件の平均絶対誤差です。"
     }
   },
-  "currentSlot": "18:00",
+  "currentSlot": "next",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率をそれぞれ乗算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。 目安として推計値の±1%程度ずれる可能性があります。",
   "marketErrors": []
 }
