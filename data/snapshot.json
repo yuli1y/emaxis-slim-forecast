@@ -1,20 +1,16 @@
 {
-  "asOf": "2026-07-10T18:00:35+09:00",
+  "asOf": "2026-07-10T23:00:33+09:00",
   "forecastDate": "2026/07/10",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
     "symbol": "0331418A",
-    "navDate": "2026/07/09",
-    "nav": 38161,
-    "previousNav": 38299,
-    "actualChange": -138,
-    "actualChangePct": -0.0036,
+    "navDate": "2026/07/10",
+    "nav": 38334,
+    "previousNav": 38161,
+    "actualChange": 173,
+    "actualChangePct": 0.0045000000000000005,
     "source": "みんかぶ",
     "history": [
-      {
-        "date": "2026-05-28",
-        "value": 37661.0
-      },
       {
         "date": "2026-05-29",
         "value": 37737.0
@@ -134,6 +130,10 @@
       {
         "date": "2026-07-09",
         "value": 38161.0
+      },
+      {
+        "date": "2026-07-10",
+        "value": 38334.0
       }
     ]
   },
@@ -141,47 +141,49 @@
     "acwi": {
       "symbol": "ACWI",
       "label": "ACWI ETF",
-      "date": "2026-07-09",
-      "value": 157.02000427246094,
-      "previousDate": "2026-07-08",
-      "previousValue": 155.89999389648438,
-      "return": 0.007184159203497131,
+      "date": "2026-07-10",
+      "value": 157.30999755859375,
+      "previousDate": "2026-07-09",
+      "previousValue": 157.02000427246094,
+      "return": 0.0018468556759787536,
       "error": ""
     },
     "usdJpy": {
       "symbol": "JPY=X",
       "label": "USD/JPY",
       "date": "2026-07-10",
-      "value": 161.67100524902344,
+      "value": 161.78799438476562,
       "previousDate": "2026-07-09",
       "previousValue": 162.53900146484375,
-      "return": -0.005340233470106925,
+      "return": -0.004620473076060838,
       "error": ""
     }
   },
   "forecasts": [
     {
       "slot": "06:00",
-      "status": "ready",
-      "predictedNav": 38387,
-      "change": 226,
-      "changePct": 0.005932477957039994,
-      "asOf": "2026-07-10T06:00:33+09:00",
+      "status": "pending",
+      "message": "2026/07/10 06:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": 0.007184159203497131,
-        "fxReturn": -0.0012427531102623401
+        "acwiReturn": null,
+        "fxReturn": null
       }
     },
     {
       "slot": "18:00",
-      "status": "ready",
-      "predictedNav": 38230,
-      "change": 69,
-      "changePct": 0.0018055606459570495,
-      "asOf": "2026-07-10T18:00:35+09:00",
+      "status": "pending",
+      "message": "2026/07/10 18:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": 0.007184159203497131,
-        "fxReturn": -0.005340233470106925
+        "acwiReturn": null,
+        "fxReturn": null
       }
     }
   ],
@@ -673,7 +675,11 @@
         "predictedNav": 38387,
         "predictedAt": "2026-07-10T06:00:33+09:00",
         "baseNavDate": "2026-07-09",
-        "baseNav": 38161
+        "baseNav": 38161,
+        "actualNav": 38334,
+        "errorYen": 53,
+        "errorPct": 0.001382584650701727,
+        "evaluatedAt": "2026-07-10T23:00:33+09:00"
       },
       {
         "forecastDate": "2026-07-10",
@@ -681,19 +687,23 @@
         "predictedNav": 38230,
         "predictedAt": "2026-07-10T18:00:35+09:00",
         "baseNavDate": "2026-07-09",
-        "baseNav": 38161
+        "baseNav": 38161,
+        "actualNav": 38334,
+        "errorYen": -104,
+        "errorPct": -0.0027129962957165962,
+        "evaluatedAt": "2026-07-10T23:00:33+09:00"
       }
     ],
     "summary": {
       "sampleSize": 20,
       "window": 20,
-      "meanAbsErrorYen": 109,
-      "meanAbsErrorPct": 0.002856082775071691,
+      "meanAbsErrorYen": 115,
+      "meanAbsErrorPct": 0.0030025512390217256,
       "label": "通常",
       "message": "直近20件の平均絶対誤差です。"
     }
   },
-  "currentSlot": "18:00",
+  "currentSlot": "next",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率をそれぞれ乗算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。 目安として推計値の±1%程度ずれる可能性があります。",
   "marketErrors": []
 }
