@@ -1,20 +1,16 @@
 {
-  "asOf": "2026-07-16T18:00:51+09:00",
+  "asOf": "2026-07-16T23:00:44+09:00",
   "forecastDate": "2026/07/16",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
     "symbol": "0331418A",
-    "navDate": "2026/07/15",
-    "nav": 38335,
-    "previousNav": 38197,
-    "actualChange": 138,
-    "actualChangePct": 0.0036,
+    "navDate": "2026/07/16",
+    "nav": 38526,
+    "previousNav": 38335,
+    "actualChange": 191,
+    "actualChangePct": 0.005,
     "source": "みんかぶ",
     "history": [
-      {
-        "date": "2026-06-03",
-        "value": 38277.0
-      },
       {
         "date": "2026-06-04",
         "value": 37988.0
@@ -134,6 +130,10 @@
       {
         "date": "2026-07-15",
         "value": 38335.0
+      },
+      {
+        "date": "2026-07-16",
+        "value": 38526.0
       }
     ]
   },
@@ -141,47 +141,49 @@
     "acwi": {
       "symbol": "ACWI",
       "label": "ACWI ETF",
-      "date": "2026-07-15",
-      "value": 157.52000427246094,
-      "previousDate": "2026-07-14",
-      "previousValue": 156.94000244140625,
-      "return": 0.0036956914873964575,
+      "date": "2026-07-16",
+      "value": 156.47500610351562,
+      "previousDate": "2026-07-15",
+      "previousValue": 157.52000427246094,
+      "return": -0.006634066408084838,
       "error": ""
     },
     "usdJpy": {
       "symbol": "JPY=X",
       "label": "USD/JPY",
       "date": "2026-07-16",
-      "value": 162.1439971923828,
+      "value": 162.3209991455078,
       "previousDate": "2026-07-15",
       "previousValue": 162.18699645996094,
-      "return": -0.0002651215480690139,
+      "return": 0.0008262233623641535,
       "error": ""
     }
   },
   "forecasts": [
     {
       "slot": "06:00",
-      "status": "ready",
-      "predictedNav": 38462,
-      "change": 127,
-      "changePct": 0.003305793511196642,
-      "asOf": "2026-07-16T06:00:42+09:00",
+      "status": "pending",
+      "message": "2026/07/16 06:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": 0.0036956914873964575,
-        "fxReturn": -0.0003884623392395037
+        "acwiReturn": null,
+        "fxReturn": null
       }
     },
     {
       "slot": "18:00",
-      "status": "ready",
-      "predictedNav": 38466,
-      "change": 131,
-      "changePct": 0.0034295901318790456,
-      "asOf": "2026-07-16T18:00:51+09:00",
+      "status": "pending",
+      "message": "2026/07/16 18:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": 0.0036956914873964575,
-        "fxReturn": -0.0002651215480690139
+        "acwiReturn": null,
+        "fxReturn": null
       }
     }
   ],
@@ -769,7 +771,11 @@
         "predictedNav": 38462,
         "predictedAt": "2026-07-16T06:00:42+09:00",
         "baseNavDate": "2026-07-15",
-        "baseNav": 38335
+        "baseNav": 38335,
+        "actualNav": 38526,
+        "errorYen": -64,
+        "errorPct": -0.0016612158023153196,
+        "evaluatedAt": "2026-07-16T23:00:44+09:00"
       },
       {
         "forecastDate": "2026-07-16",
@@ -777,19 +783,23 @@
         "predictedNav": 38466,
         "predictedAt": "2026-07-16T18:00:51+09:00",
         "baseNavDate": "2026-07-15",
-        "baseNav": 38335
+        "baseNav": 38335,
+        "actualNav": 38526,
+        "errorYen": -60,
+        "errorPct": -0.001557389814670612,
+        "evaluatedAt": "2026-07-16T23:00:44+09:00"
       }
     ],
     "summary": {
       "sampleSize": 20,
       "window": 20,
-      "meanAbsErrorYen": 140,
-      "meanAbsErrorPct": 0.00364505942179398,
+      "meanAbsErrorYen": 116,
+      "meanAbsErrorPct": 0.003031170667965878,
       "label": "通常",
       "message": "直近20件の平均絶対誤差です。"
     }
   },
-  "currentSlot": "18:00",
+  "currentSlot": "next",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率をそれぞれ乗算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。 目安として推計値の±1%程度ずれる可能性があります。",
   "marketErrors": []
 }
