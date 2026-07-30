@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-07-30T06:01:15+09:00",
+  "asOf": "2026-07-30T18:00:24+09:00",
   "forecastDate": "2026/07/30",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
@@ -152,10 +152,10 @@
       "symbol": "JPY=X",
       "label": "USD/JPY",
       "date": "2026-07-30",
-      "value": 163.3800048828125,
+      "value": 163.64300537109375,
       "previousDate": "2026-07-29",
       "previousValue": 163.86399841308594,
-      "return": -0.002953629442468131,
+      "return": -0.0013486369436384038,
       "error": ""
     }
   },
@@ -174,32 +174,19 @@
     },
     {
       "slot": "18:00",
-      "status": "pending",
-      "message": "2026/07/30 18:00更新後に表示します。",
-      "predictedNav": null,
-      "change": null,
-      "changePct": null,
-      "asOf": null,
+      "status": "ready",
+      "predictedNav": 37530,
+      "change": -561,
+      "changePct": -0.014725112208715974,
+      "asOf": "2026-07-30T18:00:24+09:00",
       "drivers": {
-        "acwiReturn": null,
-        "fxReturn": null
+        "acwiReturn": -0.013394539636073843,
+        "fxReturn": -0.0013486369436384038
       }
     }
   ],
   "accuracy": {
     "forecastHistory": [
-      {
-        "forecastDate": "2026-06-17",
-        "slot": "18:00",
-        "predictedNav": 37969,
-        "predictedAt": "2026-06-17T18:00:22+09:00",
-        "baseNavDate": "2026-06-16",
-        "baseNav": 38144,
-        "actualNav": 38115,
-        "errorYen": -146,
-        "errorPct": -0.0038305129214220124,
-        "evaluatedAt": "2026-06-17T23:00:33+09:00"
-      },
       {
         "forecastDate": "2026-06-18",
         "slot": "06:00",
@@ -903,6 +890,14 @@
         "predictedAt": "2026-07-30T06:01:15+09:00",
         "baseNavDate": "2026-07-29",
         "baseNav": 38091
+      },
+      {
+        "forecastDate": "2026-07-30",
+        "slot": "18:00",
+        "predictedNav": 37530,
+        "predictedAt": "2026-07-30T18:00:24+09:00",
+        "baseNavDate": "2026-07-29",
+        "baseNav": 38091
       }
     ],
     "summary": {
@@ -914,7 +909,7 @@
       "message": "直近20件の平均絶対誤差です。"
     }
   },
-  "currentSlot": "06:00",
+  "currentSlot": "18:00",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率をそれぞれ乗算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。 目安として推計値の±1%程度ずれる可能性があります。",
   "marketErrors": []
 }
