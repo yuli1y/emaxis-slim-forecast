@@ -249,6 +249,12 @@ def updated_forecast_history(
             "baseNavDate": date_key(fund["date"]),
             "baseNav": round(fund["value"]),
         }
+        if forecast.get("rawPredictedNav") is not None:
+            record["rawPredictedNav"] = round(forecast["rawPredictedNav"])
+        if forecast.get("biasYen") is not None:
+            record["biasYen"] = round(forecast["biasYen"])
+        if forecast.get("drivers"):
+            record["drivers"] = dict(forecast["drivers"])
         key = forecast_record_key(record)
         previous = records.get(key, {})
         for field in ("actualNav", "errorYen", "errorPct", "evaluatedAt"):
@@ -308,15 +314,18 @@ def accuracy_summary(forecast_history: list[dict]) -> dict:
     }
 
 
-def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict, as_of: str) -> dict:
+def estimate(slot_hour: int, fund: dict, acwi: dict, fx: dict, as_of: str, *, bias_yen: float = 0.0) -> dict:
     combined_return = (1 + acwi["return"]) * (1 + fx["return"]) - 1
-    predicted = fund["value"] * (1 + combined_return)
+    raw_predicted = fund["value"] * (1 + combined_return)
+    predicted = raw_predicted - bias_yen
     return {
         "slot": f"{slot_hour:02d}:00",
         "status": "ready",
+        "rawPredictedNav": round(raw_predicted),
+        "biasYen": round(bias_yen),
         "predictedNav": round(predicted),
         "change": round(predicted - fund["value"]),
-        "changePct": combined_return,
+        "changePct": (predicted / fund["value"]) - 1,
         "asOf": as_of,
         "drivers": {
             "acwiReturn": acwi["return"],
@@ -366,7 +375,36 @@ def load_existing_snapshot() -> dict | None:
         return None
 
 
-def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dict]:
+def parse_forecast_date(date_text: str | None) -> datetime | None:
+    if not date_text:
+        return None
+    for fmt in ("%Y-%m-%d", "%Y/%m/%d"):
+        try:
+            return datetime.strptime(date_text, fmt)
+        except ValueError:
+            continue
+    return None
+
+
+def weekday_slot_bias(forecast_history: list[dict], weekday: int, slot: str, window: int = 12) -> float:
+    errors: list[float] = []
+    for record in forecast_history:
+        if record.get("slot") != slot:
+            continue
+        if not isinstance(record.get("errorYen"), (int, float)):
+            continue
+        forecast_date = parse_forecast_date(record.get("forecastDate"))
+        if forecast_date is None or forecast_date.weekday() != weekday:
+            continue
+        errors.append(float(record["errorYen"]))
+
+    recent_errors = errors[-window:]
+    if len(recent_errors) < 4:
+        return 0.0
+    return sum(recent_errors) / len(recent_errors)
+
+
+def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict, *, bias_06: float = 0.0, bias_18: float = 0.0) -> list[dict]:
     current_slot = active_slot(now)
     forecast_date = now.strftime("%Y/%m/%d")
     forecasts = {
@@ -382,10 +420,10 @@ def build_forecasts(now: datetime, fund: dict, acwi: dict, fx: dict) -> list[dic
 
     as_of_str = now.isoformat(timespec="seconds")
     if current_slot == "06:00":
-        forecasts["06:00"] = estimate(6, fund, acwi, fx, as_of_str)
+        forecasts["06:00"] = estimate(6, fund, acwi, fx, as_of_str, bias_yen=bias_06)
         forecasts["18:00"] = pending_forecast("18:00", f"{forecast_date} 18:00更新後に表示します。")
     elif current_slot == "18:00":
-        forecasts["18:00"] = estimate(18, fund, acwi, fx, as_of_str)
+        forecasts["18:00"] = estimate(18, fund, acwi, fx, as_of_str, bias_yen=bias_18)
 
     return [forecasts["06:00"], forecasts["18:00"]]
 
@@ -402,7 +440,10 @@ def build_snapshot() -> dict:
     forecast_date = now.strftime("%Y/%m/%d")
     slot = active_slot(now)
     market_errors = [item["error"] for item in (acwi, fx) if item.get("error")]
-    forecasts = build_forecasts(now, fund, acwi, fx)
+    prior_accuracy = ((existing or {}).get("accuracy") or {}).get("forecastHistory") or []
+    bias_06 = weekday_slot_bias(prior_accuracy, now.weekday(), "06:00")
+    bias_18 = weekday_slot_bias(prior_accuracy, now.weekday(), "18:00")
+    forecasts = build_forecasts(now, fund, acwi, fx, bias_06=bias_06, bias_18=bias_18)
     forecast_history = updated_forecast_history(existing, forecasts, forecast_date, fund, history, as_of)
     accuracy = {
         "forecastHistory": forecast_history,
@@ -411,7 +452,8 @@ def build_snapshot() -> dict:
 
     method = (
         "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率を"
-        "それぞれ乗算して掛けた予想基準価額です。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。"
+        "それぞれ乗算して掛けた予想基準価額に、曜日×時刻ごとの過去誤差補正を加えたものです。"
+        "実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。"
         f" 目安として推計値の±{ESTIMATED_ERROR_PCT:.0%}程度ずれる可能性があります。"
     )
     if market_errors:
@@ -437,6 +479,10 @@ def build_snapshot() -> dict:
         },
         "forecasts": forecasts,
         "accuracy": accuracy,
+        "forecastBiases": {
+            "06:00": round(bias_06),
+            "18:00": round(bias_18),
+        },
         "currentSlot": slot,
         "method": method,
         "marketErrors": market_errors,
