@@ -1,6 +1,6 @@
 {
-  "asOf": "2026-08-31T23:00:13+09:00",
-  "forecastDate": "2026/08/31",
+  "asOf": "2026-09-01T06:00:15+09:00",
+  "forecastDate": "2026/09/01",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
     "symbol": "0331418A",
@@ -142,41 +142,42 @@
       "symbol": "ACWI",
       "label": "ACWI ETF",
       "date": "2026-08-31",
-      "value": 160.71499633789062,
-      "previousDate": "2026-08-28",
-      "previousValue": 161.08999633789062,
-      "return": -0.0023278912938419216,
+      "value": 160.67999267578125,
+      "previousDate": "2026-08-27",
+      "previousValue": 161.52999877929688,
+      "return": -0.005262218225340343,
       "error": ""
     },
     "usdJpy": {
       "symbol": "JPY=X",
       "label": "USD/JPY",
-      "date": "2026-08-31",
-      "value": 159.8489990234375,
+      "date": "2026-09-01",
+      "value": 159.7310028076172,
       "previousDate": "2026-08-28",
       "previousValue": 159.3209991455078,
-      "return": 0.0033140633109354223,
+      "return": 0.002573443954710042,
       "error": ""
     }
   },
   "forecasts": [
     {
       "slot": "06:00",
-      "status": "pending",
-      "message": "2026/08/31 06:00更新後に表示します。",
-      "predictedNav": null,
-      "change": null,
-      "changePct": null,
-      "asOf": null,
+      "status": "ready",
+      "rawPredictedNav": 38800,
+      "biasYen": -117,
+      "predictedNav": 38917,
+      "change": 12,
+      "changePct": 0.0002985833329867127,
+      "asOf": "2026-09-01T06:00:15+09:00",
       "drivers": {
-        "acwiReturn": null,
-        "fxReturn": null
+        "acwiReturn": -0.005262218225340343,
+        "fxReturn": 0.002573443954710042
       }
     },
     {
       "slot": "18:00",
       "status": "pending",
-      "message": "2026/08/31 18:00更新後に表示します。",
+      "message": "2026/09/01 18:00更新後に表示します。",
       "predictedNav": null,
       "change": null,
       "changePct": null,
@@ -189,18 +190,6 @@
   ],
   "accuracy": {
     "forecastHistory": [
-      {
-        "forecastDate": "2026-07-21",
-        "slot": "18:00",
-        "predictedNav": 38252,
-        "predictedAt": "2026-07-21T18:00:42+09:00",
-        "baseNavDate": "2026-07-17",
-        "baseNav": 38338,
-        "actualNav": 37913,
-        "errorYen": 339,
-        "errorPct": 0.008941524015509192,
-        "evaluatedAt": "2026-07-21T23:00:51+09:00"
-      },
       {
         "forecastDate": "2026-07-22",
         "slot": "06:00",
@@ -1148,6 +1137,20 @@
         "errorYen": -130,
         "errorPct": -0.003341472818403804,
         "evaluatedAt": "2026-08-31T23:00:13+09:00"
+      },
+      {
+        "forecastDate": "2026-09-01",
+        "slot": "06:00",
+        "predictedNav": 38917,
+        "predictedAt": "2026-09-01T06:00:15+09:00",
+        "baseNavDate": "2026-08-31",
+        "baseNav": 38905,
+        "rawPredictedNav": 38800,
+        "biasYen": -117,
+        "drivers": {
+          "acwiReturn": -0.005262218225340343,
+          "fxReturn": 0.002573443954710042
+        }
       }
     ],
     "summary": {
@@ -1160,10 +1163,10 @@
     }
   },
   "forecastBiases": {
-    "06:00": -12,
-    "18:00": 61
+    "06:00": -117,
+    "18:00": 6
   },
-  "currentSlot": "next",
+  "currentSlot": "06:00",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率をそれぞれ乗算して掛けた予想基準価額に、曜日×時刻ごとの過去誤差補正を加えたものです。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。 目安として推計値の±1%程度ずれる可能性があります。",
   "marketErrors": []
 }
