@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-03T18:00:11+09:00",
+  "asOf": "2026-11-03T23:00:12+09:00",
   "forecastDate": "2026/11/03",
   "fund": {
     "name": "eMAXIS Slim 全世界株式(オール・カントリー)",
@@ -152,40 +152,38 @@
       "symbol": "JPY=X",
       "label": "USD/JPY",
       "date": "2026-11-03",
-      "value": 157.9759979248047,
+      "value": 158.15499877929688,
       "previousDate": "2026-11-02",
       "previousValue": 157.677001953125,
-      "return": 0.0018962560676323292,
+      "return": 0.0030314936246313984,
       "error": ""
     }
   },
   "forecasts": [
     {
       "slot": "06:00",
-      "status": "ready",
-      "rawPredictedNav": 37155,
-      "biasYen": -3,
-      "predictedNav": 37158,
-      "change": -30,
-      "changePct": -0.0008053196003348084,
-      "asOf": "2026-11-03T06:00:11+09:00",
+      "status": "pending",
+      "message": "2026/11/03 06:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": -0.0015060280726918451,
-        "fxReturn": 0.0006209724901065083
+        "acwiReturn": null,
+        "fxReturn": null
       }
     },
     {
       "slot": "18:00",
-      "status": "ready",
-      "rawPredictedNav": 37211,
-      "biasYen": -46,
-      "predictedNav": 37256,
-      "change": 68,
-      "changePct": 0.0018383244981012847,
-      "asOf": "2026-11-03T18:00:11+09:00",
+      "status": "pending",
+      "message": "2026/11/03 18:00更新後に表示します。",
+      "predictedNav": null,
+      "change": null,
+      "changePct": null,
+      "asOf": null,
       "drivers": {
-        "acwiReturn": -0.0012817031328337114,
-        "fxReturn": 0.0018962560676323292
+        "acwiReturn": null,
+        "fxReturn": null
       }
     }
   ],
@@ -1261,7 +1259,7 @@
     "06:00": -3,
     "18:00": -46
   },
-  "currentSlot": "18:00",
+  "currentSlot": "next",
   "method": "直近の基準価額に、ACWI ETF(米ドル建て)の日次変化率とドル円の日次変化率をそれぞれ乗算して掛けた予想基準価額に、曜日×時刻ごとの過去誤差補正を加えたものです。実際の採用為替、評価タイミング、組入差、ETF固有要因は未調整です。 目安として推計値の±1%程度ずれる可能性があります。",
   "marketErrors": []
 }
